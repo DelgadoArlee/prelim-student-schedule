@@ -1,7 +1,12 @@
 import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
-import Calendar from './Calendar';
+import Calendar from './components/Calendar/Calendar';
+import { Student, Subject }  from "./fakedata/students"
+
+
+
+
 
 function App() {
   return (
@@ -21,8 +26,13 @@ function App() {
     //     </a>
     //   </header>
     // </div>
-
-    <Calendar />
+   
+    <>
+    
+  
+    <Calendar/>
+    </>
+    
   );
 }
 
