@@ -33,7 +33,7 @@ export default function Calendar(){
                     <Toolbar>
                         <FormControl sx={{m: 1, minWidth: 120}}>
                             <InputLabel>
-                                <em>Course</em>
+                                <em>Student</em>
                             </InputLabel>
                             <Select autoWidth label="Student" onChange={handleChange} >
                                 {studentOptions}
