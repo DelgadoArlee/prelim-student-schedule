@@ -104,6 +104,50 @@ export const students: Student[] = [
         ]
     },
     {
+        firstName: "Von Jiktor", 
+        lastName: "Ratossa", 
+        course: "BSSE", 
+        year: 1, 
+        schedule:[
+            {
+                title: "Engg 1001",
+                startTime: '7:00:00', 
+                endTime:"9:00:00", 
+                daysOfWeek: [1,5]
+            },
+            {
+                title: "EMath 1101",
+                startTime: '9:00:00', 
+                endTime:"11:00:00", 
+                daysOfWeek: [1,5]
+            },
+            {
+                title: "EMath 1102",
+                startTime: '13:30:00', 
+                endTime:"15:30:00", 
+                daysOfWeek: [1,5]
+            },
+            {
+                title: "SE 1121",
+                startTime: '15:30:00', 
+                endTime:"17:30:00", 
+                daysOfWeek: [1,5]
+            },
+            {
+                title: "GESocSci 2",
+                startTime: '8:30:00', 
+                endTime:"10:00:00", 
+                daysOfWeek: [2,4]
+            },
+            {
+                title: "GEMath 1",
+                startTime: '13:00:00', 
+                endTime:"14:30:00", 
+                daysOfWeek: [2,4]
+            }, 
+        ]
+    },
+    {
         firstName: "jaja", 
         lastName: "Delgado", 
         course: "BSSE", 
