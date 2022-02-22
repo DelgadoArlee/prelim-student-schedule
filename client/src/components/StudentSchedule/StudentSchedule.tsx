@@ -25,6 +25,7 @@ export default function StudentSchedule() {
 
         return [...subjects].map((subject: Subject, index: number) => {
             subject.color = (typeof color !== "undefined")? color : colors[index] 
+            subject.title = ''
             subject.title = `${subject.title} - ${student.firstName}  ${student.lastName}`
 
             if(borderColor){
@@ -80,6 +81,7 @@ export default function StudentSchedule() {
         }else{
             setStudentA(studentArray[index]);
         }
+
     }
 
     const compare = () => {
