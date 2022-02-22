@@ -6,6 +6,7 @@ export interface Subject{
     allDay?: boolean
     daysOfWeek?: number[]
     color?: string
+    borderColor?: string
 }
 
 export interface Student{
