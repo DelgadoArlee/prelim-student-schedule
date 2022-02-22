@@ -1,10 +1,12 @@
 
 export interface Subject{
-    title: string
-    startTime: string
-    endTime: string
+    title?: string
+    startTime?: string
+    endTime?: string
     allDay?: boolean
-    daysOfWeek: number[]
+    daysOfWeek?: number[]
+    color?: string
+    borderColor?: string
 }
 
 export interface Student{
