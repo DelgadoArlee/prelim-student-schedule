@@ -1,14 +1,35 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { AppBar, FormControl, Select, SelectChangeEvent, MenuItem, Toolbar, InputLabel, Button } from "@mui/material";
 import { students, Subject, Student } from "../../fakedata/students";
 import Calendar from "../Calendar/Calendar";
 import colors from "../../styles/colors";
 import { border } from '@mui/system';
 
+const getStudentsFromLS=()=>{
+    const data = localStorage.getItem('students');
+    if(data){
+      return JSON.parse(data);
+    }
+    else{
+      return []
+    }
+  }
+
 
 export default function StudentSchedule() {
+
+    //fake student data saved to ls
+    localStorage.setItem('students', JSON.stringify(students))
+
+    const [studentArray, setStudentArray] = useState<Student[]>([...getStudentsFromLS()]);
+
+    useEffect(()=>{
+        localStorage.setItem('students',JSON.stringify(studentArray));
+      },[studentArray])
+
+
     const [view, setView] = useState<string>("");
-    const [studentArray, setStudentArray] = useState<Student[]>([...students]);
+    
     const [schedule, setSchedule] = useState<Subject[]>([]); 
     const [studentA, setStudentA] = useState<Student>();
     const [studentB, setStudentB] = useState<Student>();
@@ -69,19 +90,41 @@ export default function StudentSchedule() {
         setSchedule(setTitleAndColor([...student.schedule], student));
     };
 
-    const handleStudentCompareChange = (event: SelectChangeEvent) => {
+    // const handleStudentCompareChange = (event: SelectChangeEvent) => {
+    //     const {
+    //         target: { value },
+    //       } = event;
+        
+    //     const index: number = parseInt(value);
+
+    //     setStudentA(studentArray[index])
+
+    //     // if (typeof studentA !== "undefined" ){
+    //     //     setStudentB(studentArray[index]);
+    //     // }else{
+    //     //     setStudentA(studentArray[index]);
+    //     // }
+
+    // }
+
+    const handleStudentAChange = (event: SelectChangeEvent) => {
         const {
             target: { value },
           } = event;
         
         const index: number = parseInt(value);
 
-        if (typeof studentA !== "undefined" ){
-            setStudentB(studentArray[index]);
-        }else{
-            setStudentA(studentArray[index]);
-        }
+        setStudentA(studentArray[index])
+    }
 
+    const handleStudentBChange = (event: SelectChangeEvent) => {
+        const {
+            target: { value },
+          } = event;
+        
+        const index: number = parseInt(value);
+
+        setStudentB(studentArray[index])
     }
 
     const compare = () => {
@@ -115,7 +158,7 @@ export default function StudentSchedule() {
                                 <InputLabel>
                                     <em>StudentA</em>
                                 </InputLabel>
-                                <Select autoWidth label="StudentA" onChange={handleStudentCompareChange} >
+                                <Select autoWidth label="StudentA" onChange={handleStudentAChange} >
                                     {studentOptions}
                                 </Select>
                         </FormControl>
@@ -123,7 +166,7 @@ export default function StudentSchedule() {
                             <InputLabel>
                                 <em>StudentB</em>
                             </InputLabel>
-                            <Select autoWidth label="StudentB" onChange={handleStudentCompareChange} >
+                            <Select autoWidth label="StudentB" onChange={handleStudentBChange} >
                                 {studentOptions}
                             </Select>
                         </FormControl>
