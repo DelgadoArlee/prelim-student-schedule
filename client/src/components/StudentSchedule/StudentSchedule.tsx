@@ -23,14 +23,14 @@ const getStudentsFromLS = () => {
 export default function StudentSchedule() {
 
     //fake student data saved to ls
-    localStorage.setItem('students', JSON.stringify(students))
+    // localStorage.setItem('students', JSON.stringify(students))
     // if (!localStorageHasBeenRun) {
     //     localStorage.setItem('students', JSON.stringify(students))
     //     localStorageHasBeenRun = true;
     // }
 
-
     const [studentArray, setStudentArray] = useState<Student[]>([...getStudentsFromLS()]);
+
 
     useEffect(() => {
         localStorage.setItem('students', JSON.stringify(studentArray));
@@ -87,7 +87,7 @@ export default function StudentSchedule() {
     }
 
     const handleStudentChange = (event: SelectChangeEvent) => {
-
+        // setStudentArray([...getStudentsFromLS()]) // this updates the studentArray and triggers the useEffect hook
         const {
             target: { value },
         } = event;
@@ -99,7 +99,13 @@ export default function StudentSchedule() {
         setSchedule(setTitleAndColor([...student.schedule], student));
 
         console.log(studentArray) // added this for testing to be removed
+        console.log([...getStudentsFromLS()]) // added this for testing to be removed
     };
+
+    function addStudentToDropdown() {
+        setStudentArray([...getStudentsFromLS()])
+        return 'bruh';
+    }
 
     // const handleStudentCompareChange = (event: SelectChangeEvent) => {
     //     const {
@@ -153,10 +159,10 @@ export default function StudentSchedule() {
                 element =
                     <>
                         <FormControl sx={{ m: 1, minWidth: 120 }}>
-                            <InputLabel>
+                            <InputLabel >
                                 <em>Student</em>
                             </InputLabel>
-                            <Select autoWidth label="Student" onChange={handleStudentChange} >
+                            <Select autoWidth label="Student" onChange={handleStudentChange} onMouseOver={addStudentToDropdown}>
                                 {studentOptions}
                             </Select>
                         </FormControl>
@@ -171,7 +177,7 @@ export default function StudentSchedule() {
                             <InputLabel>
                                 <em>StudentA</em>
                             </InputLabel>
-                            <Select autoWidth label="StudentA" onChange={handleStudentAChange} >
+                            <Select autoWidth label="StudentA" onChange={handleStudentAChange} onMouseOver={addStudentToDropdown}>
                                 {studentOptions}
                             </Select>
                         </FormControl>
@@ -179,7 +185,7 @@ export default function StudentSchedule() {
                             <InputLabel>
                                 <em>StudentB</em>
                             </InputLabel>
-                            <Select autoWidth label="StudentB" onChange={handleStudentBChange} >
+                            <Select autoWidth label="StudentB" onChange={handleStudentBChange} onMouseOver={addStudentToDropdown}>
                                 {studentOptions}
                             </Select>
                         </FormControl>

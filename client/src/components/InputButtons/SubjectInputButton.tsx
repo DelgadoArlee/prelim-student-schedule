@@ -33,6 +33,7 @@ const style = {
 };
 
 export default function SubjectInputButton() {
+    // make a current user useState
 
     // for modal window
     const [open, setOpen] = React.useState(false);

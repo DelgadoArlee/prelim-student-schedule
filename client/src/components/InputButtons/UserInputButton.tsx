@@ -45,15 +45,25 @@ const style = {
 };
 
 export default function UserInputButton() {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [course, setCourse] = useState('');
+    const [firstNameError, setFirstNameError] = useState(false);
+    const [lastNameError, setLastNameError] = useState(false);
+    const [courseError, setCourseError] = useState(false);
+    const [year, setYear] = useState(9);
+
 
     //fake student data saved to ls
     // localStorage.setItem('students', JSON.stringify(students))
+
 
     const [studentArray, setStudentArray] = useState<Student[]>([...getStudentsFromLS()]);
 
     useEffect(() => {
         localStorage.setItem('students', JSON.stringify(studentArray));
     }, [studentArray])
+
 
     // for modal window
     const [open, setOpen] = React.useState(false);
@@ -63,11 +73,9 @@ export default function UserInputButton() {
 
 
 
-    // for color dropdown
-    const [year, setYear] = React.useState('');
-
+    // for year dropdown
     const dropdownYear = (event: SelectChangeEvent) => {
-        setYear(event.target.value);
+        setYear(parseInt(event.target.value));
     };
     //
 
@@ -82,23 +90,32 @@ export default function UserInputButton() {
 
     // include enter click function here
     function addSubject() {
-        // setStudentArray([...studentArray,
-        // {
-        //     title: "Bruh",
-        //     startTime: '5:00:00',
-        //     endTime: "6:00:00",
-        //     daysOfWeek: [5]
-        // }])
+        setFirstNameError(false)
+        setLastNameError(false)
+        setCourseError(false)
 
-        setStudentArray([...studentArray,
-        {
-            firstName: "Bruh",
-            lastName: "Delgado",
-            course: "BSSE",
-            year: 3,
-            schedule: []
-        }])
+        if (firstName == '') {
+            setFirstNameError(true)
+        }
 
+        if (lastName == '') {
+            setLastNameError(true)
+        }
+
+        if (course == '') {
+            setCourseError(true)
+        }
+
+        if (firstName && lastName && course) {
+            setStudentArray([...studentArray,
+            {
+                firstName: firstName,
+                lastName: lastName,
+                course: course,
+                year: year,
+                schedule: []
+            }])
+        }
         //^ this works bruh
 
         // )
@@ -131,23 +148,28 @@ export default function UserInputButton() {
                     <div>
                         Input the User's Details Here:
                         <TextField style={{ marginTop: 20 }}
+                            onChange={(e) => setFirstName(e.target.value)}
                             id="firstname-input-field"
                             label="Firstname"
                             placeholder="Juan"
                             multiline
+                            error={firstNameError}
                         />
                         <TextField style={{ marginTop: 20 }}
+                            onChange={(e) => setLastName(e.target.value)}
                             id="lastname-input-field"
                             label="Lastname"
                             placeholder="Garcia"
                             multiline
+                            error={lastNameError}
                         />
                         <TextField style={{ marginTop: 20 }}
-                            //error
+                            onChange={(e) => setCourse(e.target.value)}
                             id="course-input-field"
                             label="Course"
                             placeholder="BSSE"
                             multiline
+                            error={courseError}
                         // helperText="Incorrect entry."
                         //^included error and helperText here idk how it'll be implemented yet
                         />
@@ -158,7 +180,7 @@ export default function UserInputButton() {
                             <Select
                                 labelId="demo-simple-select-helper-label"
                                 id="demo-simple-select-helper"
-                                value={year}
+                                value={undefined}
                                 label="Year"
                                 onChange={dropdownYear}
                             >
@@ -170,6 +192,7 @@ export default function UserInputButton() {
                                 <MenuItem value={0}>Irregular</MenuItem>
                             </Select>
 
+
                         </FormControl>
                         {/* End of year dropdown */}
 
@@ -178,7 +201,6 @@ export default function UserInputButton() {
                         <Button style={{ marginTop: 20 }} variant="contained" onClick={printStudentArray}>Print Array Test</Button>
                         {/*^button just for testing */}
                     </div>
-
                 </Box>
             </Modal>
         </div>
