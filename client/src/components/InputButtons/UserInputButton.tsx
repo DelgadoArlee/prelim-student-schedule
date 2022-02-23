@@ -9,13 +9,6 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-import FormLabel from '@mui/material/FormLabel';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormHelperText from '@mui/material/FormHelperText';
-import Checkbox from '@mui/material/Checkbox';
-
-
 import { students, Subject, Student } from "../../fakedata/students";
 
 
@@ -53,11 +46,6 @@ export default function UserInputButton() {
     const [courseError, setCourseError] = useState(false);
     const [year, setYear] = useState(9);
 
-
-    //fake student data saved to ls
-    // localStorage.setItem('students', JSON.stringify(students))
-
-
     const [studentArray, setStudentArray] = useState<Student[]>([...getStudentsFromLS()]);
 
     useEffect(() => {
@@ -79,8 +67,6 @@ export default function UserInputButton() {
     };
     //
 
-
-    // const [studentArray, setStudentArray] = React.useState(students);
 
     // just for testing remove after
     function printStudentArray() {
@@ -118,15 +104,8 @@ export default function UserInputButton() {
         }
         //^ this works bruh
 
-        // )
-        // students[0].schedule.push({
-        //     title: "Bruh",
-        //     startTime: '5:00:00',
-        //     endTime: "6:00:00",
-        //     daysOfWeek: [5]
-        // })
+
         console.log('bruh')
-        // console.log(studentArray)
     }
 
     return (

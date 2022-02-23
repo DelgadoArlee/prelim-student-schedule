@@ -87,7 +87,6 @@ export default function StudentSchedule() {
     }
 
     const handleStudentChange = (event: SelectChangeEvent) => {
-        // setStudentArray([...getStudentsFromLS()]) // this updates the studentArray and triggers the useEffect hook
         const {
             target: { value },
         } = event;
@@ -103,7 +102,7 @@ export default function StudentSchedule() {
     };
 
     function addStudentToDropdown() {
-        setStudentArray([...getStudentsFromLS()])
+        setStudentArray([...getStudentsFromLS()]) // this updates the studentArray and triggers the useEffect hook
         return 'bruh';
     }
 
