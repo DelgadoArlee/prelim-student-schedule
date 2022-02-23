@@ -43,6 +43,7 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
     const [studentSchedule, setStudentSchedule] = useState([...props.student.schedule]);
     // ^ initialized at the onset as an empty array due to the placeholder value for currentStudent in StudentSchedule I think
 
+
     const [subject, setSubject] = useState('');
     const [timeslotStartTime, setTimeslotStartTime] = useState('');
     const [timeslotEndTime, setTimeslotEndTime] = useState('');
@@ -50,6 +51,10 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
     const [timeslotStartError, setTimeslotStartError] = useState(false);
     const [timeslotEndError, setTimeslotEndError] = useState(false)
 
+    // hacky solution
+    // useEffect(() => {
+    //     setStudentSchedule([...props.student.schedule]);
+    // }, [timeslotEndTime])
 
     // for modal window
     const [open, setOpen] = React.useState(false);
@@ -91,21 +96,22 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
 
     // just for testing remove after
     function printStudentArray() {
-        setStudentSchedule([...props.student.schedule]); // first time printed it's equal to 0 probably coz console.log appears first
+        // setStudentSchedule([...props.student.schedule]); // first time printed it's equal to 0 probably coz console.log appears first
+        console.log('student name', props.student.firstName)
         console.log('studentSchedule', studentSchedule)
         console.log('props.student.schedule', [...props.student.schedule])
-        console.log(props.student.firstName)
     }
 
-    function settingProperScheduleBeforeAddingSubject() {
-        setStudentSchedule([...props.student.schedule]);
-        addSubject();
-    }
+    // function settingProperScheduleBeforeAddingSubject() {
+    //     setStudentSchedule([...props.student.schedule]);
+    //     addSubject();
+    // }
 
 
     // include enter click function here
     function addSubject() {
-        setStudentSchedule([...props.student.schedule]);
+        // setStudentSchedule([...props.student.schedule]);
+        // this is run after I think
 
         setSubjectError(false);
         setTimeslotStartError(false);
@@ -124,13 +130,18 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
         }
 
         if (subject && timeslotStartTime && timeslotEndTime) {
-            setStudentSchedule([...studentSchedule, {
+            // setStudentSchedule([...props.student.schedule]);
+            console.log('studentSchedule', studentSchedule)
+            console.log('props.student.schedule', [...props.student.schedule])
+            setStudentSchedule([...studentSchedule,
+            {
                 title: subject,
                 startTime: timeslotStartTime,
                 endTime: timeslotEndTime,
                 daysOfWeek: [5]
-            }])
-
+            }
+            ])
+            // this is run before above set schedule is run I think
         }
         // setStudentArray([...studentArray,
         // {
@@ -159,9 +170,8 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
         //     daysOfWeek: [5]
         // }
         //)
-        console.log('current student subject array', props.student.schedule);
-        console.log(props.student.firstName)
         // console.log('bruh')
+        console.log('student name', props.student.firstName)
     }
 
     return (
@@ -286,7 +296,7 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
                         {/* End of color dropdown */}
 
 
-                        <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" onClick={settingProperScheduleBeforeAddingSubject}>Enter</Button>
+                        <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" onClick={addSubject}>Enter</Button>
                         <Button style={{ marginTop: 20 }} variant="contained" onClick={printStudentArray}>Print Array Test</Button>
                         {/*^button just for testing */}
                     </div>
