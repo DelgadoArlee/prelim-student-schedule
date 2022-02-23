@@ -22,6 +22,17 @@ const getStudentsFromLS = () => {
 
 export default function StudentSchedule() {
 
+    // to be used as a prop for SubjectInputButton
+    const [currentStudent, setCurrentStudent] = useState<Student>(
+        {
+            firstName: "Arlee",
+            lastName: "Delgado",
+            course: "BSSE",
+            year: 3,
+            schedule: []
+        }
+    ); //^ placeholder value so it won't be undefined
+
     //fake student data saved to ls
     // localStorage.setItem('students', JSON.stringify(students))
     // if (!localStorageHasBeenRun) {
@@ -97,7 +108,10 @@ export default function StudentSchedule() {
 
         setSchedule(setTitleAndColor([...student.schedule], student));
 
+        setCurrentStudent(student); // sets a value for the prop to be used for the subjectInputButton
+
         console.log(studentArray) // added this for testing to be removed
+        console.log(student)
         console.log([...getStudentsFromLS()]) // added this for testing to be removed
     };
 
@@ -166,7 +180,7 @@ export default function StudentSchedule() {
                             </Select>
                         </FormControl>
                         <UserInputButton />
-                        <SubjectInputButton />
+                        <SubjectInputButton student={currentStudent} />
                     </>
                 break;
             case "compare":

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
@@ -32,8 +32,24 @@ const style = {
     width: '30ch',
 };
 
-export default function SubjectInputButton() {
-    // make a current user useState
+interface SubjectInputButtonProps {
+    student: Student
+}
+
+export default function SubjectInputButton(props: SubjectInputButtonProps) {
+    // import the events from the calendar and reload it or check the code in studentSchedule and how it reloads the subjects
+    // have to pull the student array
+
+    const [studentSchedule, setStudentSchedule] = useState([...props.student.schedule]);
+    // ^ initialized at the onset as an empty array due to the placeholder value for currentStudent in StudentSchedule I think
+
+    const [subject, setSubject] = useState('');
+    const [timeslotStartTime, setTimeslotStartTime] = useState('');
+    const [timeslotEndTime, setTimeslotEndTime] = useState('');
+    const [subjectError, setSubjectError] = useState(false);
+    const [timeslotStartError, setTimeslotStartError] = useState(false);
+    const [timeslotEndError, setTimeslotEndError] = useState(false)
+
 
     // for modal window
     const [open, setOpen] = React.useState(false);
@@ -71,16 +87,51 @@ export default function SubjectInputButton() {
     //
 
 
-    const [studentArray, setStudentArray] = React.useState(students);
+
 
     // just for testing remove after
     function printStudentArray() {
-        console.log(studentArray)
+        setStudentSchedule([...props.student.schedule]); // first time printed it's equal to 0 probably coz console.log appears first
+        console.log('studentSchedule', studentSchedule)
+        console.log('props.student.schedule', [...props.student.schedule])
+        console.log(props.student.firstName)
+    }
+
+    function settingProperScheduleBeforeAddingSubject() {
+        setStudentSchedule([...props.student.schedule]);
+        addSubject();
     }
 
 
     // include enter click function here
     function addSubject() {
+        setStudentSchedule([...props.student.schedule]);
+
+        setSubjectError(false);
+        setTimeslotStartError(false);
+        setTimeslotEndError(false);
+
+        if (subject == '') {
+            setSubjectError(true)
+        }
+
+        if (timeslotStartTime == '') {
+            setTimeslotStartError(true)
+        }
+
+        if (timeslotEndTime == '') {
+            setTimeslotEndError(true)
+        }
+
+        if (subject && timeslotStartTime && timeslotEndTime) {
+            setStudentSchedule([...studentSchedule, {
+                title: subject,
+                startTime: timeslotStartTime,
+                endTime: timeslotEndTime,
+                daysOfWeek: [5]
+            }])
+
+        }
         // setStudentArray([...studentArray,
         // {
         //     title: "Bruh",
@@ -89,25 +140,28 @@ export default function SubjectInputButton() {
         //     daysOfWeek: [5]
         // }])
 
-        setStudentArray([...studentArray,
-        {
-            firstName: "Bruh",
-            lastName: "Delgado",
-            course: "BSSE",
-            year: 3,
-            schedule: []
-        }])
+        // setStudentArray([...studentArray,
+        // {
+        //     firstName: "Bruh",
+        //     lastName: "Delgado",
+        //     course: "BSSE",
+        //     year: 3,
+        //     schedule: []
+        // }])
         //^ this works bruh
 
         // )
-        // students[0].schedule.push({
+        // students[0].schedule.push(
+        //    {
         //     title: "Bruh",
         //     startTime: '5:00:00',
         //     endTime: "6:00:00",
         //     daysOfWeek: [5]
-        // })
-        console.log('bruh')
-        // console.log(studentArray)
+        // }
+        //)
+        console.log('current student subject array', props.student.schedule);
+        console.log(props.student.firstName)
+        // console.log('bruh')
     }
 
     return (
@@ -128,23 +182,28 @@ export default function SubjectInputButton() {
                     <div>
                         Input the Subject's Details Here:
                         <TextField style={{ marginTop: 20 }}
+                            onChange={(e) => setSubject(e.target.value)}
                             id="subject-input-field"
                             label="Subject"
                             placeholder="Emath2200"
                             multiline
+                            error={subjectError}
                         />
                         <TextField style={{ marginTop: 20 }}
+                            onChange={(e) => setTimeslotStartTime(e.target.value)}
                             id="subject-timeslot-start-input-field"
                             label="Timeslot Start Time"
                             placeholder="10:00:00"
                             multiline
+                            error={timeslotStartError}
                         />
                         <TextField style={{ marginTop: 20 }}
-                            //error
+                            onChange={(e) => setTimeslotEndTime(e.target.value)}
                             id="subject-timeslot-end-input-field"
                             label="Timeslot End Time"
                             placeholder="12:00:00"
                             multiline
+                            error={timeslotEndError}
                         // helperText="Incorrect entry."
                         //^included error and helperText here idk how it'll be implemented yet
                         />
@@ -227,7 +286,7 @@ export default function SubjectInputButton() {
                         {/* End of color dropdown */}
 
 
-                        <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" onClick={addSubject}>Enter</Button>
+                        <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" onClick={settingProperScheduleBeforeAddingSubject}>Enter</Button>
                         <Button style={{ marginTop: 20 }} variant="contained" onClick={printStudentArray}>Print Array Test</Button>
                         {/*^button just for testing */}
                     </div>
