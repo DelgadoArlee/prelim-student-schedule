@@ -33,6 +33,16 @@ const style = {
     width: '30ch',
 };
 
+const getStudentsFromLS = () => {
+    const data = localStorage.getItem('students');
+    if (data) {
+        return JSON.parse(data);
+    }
+    else {
+        return []
+    }
+}
+
 interface SubjectInputButtonProps {
     student: Student
 }
@@ -45,9 +55,9 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
 
     const [studentSchedule, setStudentSchedule] = useState([...props.student.schedule]);
     // ^ initialized at the onset as an empty array due to the placeholder value for currentStudent in StudentSchedule I think
-    console.log('inital studentSchedule value', studentSchedule);
-    console.log('initial student', props.student.firstName);
-    console.log('initial props.student.schedule', props.student.schedule);
+    // console.log('inital studentSchedule value', studentSchedule);
+    // console.log('initial student', props.student.firstName);
+    // console.log('initial props.student.schedule', props.student.schedule);
 
 
     const [subject, setSubject] = useState('');
@@ -104,6 +114,7 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
     function printStudentArray() {
         // setStudentSchedule([...props.student.schedule]); // first time printed it's equal to 0 probably coz console.log appears first
         console.log('student name', props.student.firstName)
+        console.log('student object',)
         console.log('studentSchedule', studentSchedule)
         console.log('props.student.schedule', [...props.student.schedule])
     }
@@ -151,48 +162,66 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
                 daysOfWeek: [5]
             }
             ])
-            // this is run before above set schedule is run I think
+            var studentArray = [...getStudentsFromLS()];
 
-            // localStorage.setItem('students', JSON.stringify([...props.students,
-            // {
-            //     firstName: firstName,
-            //     lastName: lastName,
-            //     course: course,
-            //     year: year,
-            //     schedule: []
-            // }]));
-            // ^ have to implement something similar
+            var currentStudentArray = studentArray.filter((element) => {
+                if (element.firstName == props.student.firstName) {
+                    return element
+                }
+            })
+
+            var otherStudentsArray = studentArray.filter((element) => {
+                if (element.firstName !== props.student.firstName) {
+                    return element
+                }
+            })
+
+            function setNewSchedule() {
+                currentStudentArray[0].schedule = studentSchedule
+            }
+            setNewSchedule()
+            var currentStudentArrayItem = currentStudentArray[0];
+
+            localStorage.setItem('students', JSON.stringify([...otherStudentsArray,
+
+                currentStudentArrayItem // this is wrong // check local storage for value
+
+            ])
+            );
+
+            console.log('filter student array', currentStudentArray)
+            console.log('other students array', otherStudentsArray)
+            console.log('student name', props.student.firstName)
 
         }
-        // setStudentArray([...studentArray,
-        // {
-        //     title: "Bruh",
-        //     startTime: '5:00:00',
-        //     endTime: "6:00:00",
-        //     daysOfWeek: [5]
-        // }])
+        // var studentArray = [...getStudentsFromLS()];
 
-        // setStudentArray([...studentArray,
-        // {
-        //     firstName: "Bruh",
-        //     lastName: "Delgado",
-        //     course: "BSSE",
-        //     year: 3,
-        //     schedule: []
-        // }])
-        //^ this works bruh
+        // var currentStudentArray = studentArray.filter((element) => {
+        //     if (element.firstName == props.student.firstName) {
+        //         return element
+        //     }
+        // })
 
-        // )
-        // students[0].schedule.push(
-        //    {
-        //     title: "Bruh",
-        //     startTime: '5:00:00',
-        //     endTime: "6:00:00",
-        //     daysOfWeek: [5]
+        // var otherStudentsArray = studentArray.filter((element) => {
+        //     if (element.firstName !== props.student.firstName) {
+        //         return element
+        //     }
+        // })
+
+        // function setNewSchedule() {
+        //     currentStudentArray[0].schedule = studentSchedule
         // }
-        //)
-        // console.log('bruh')
-        console.log('student name', props.student.firstName)
+        // setNewSchedule()
+        // var currentStudentArrayItem = currentStudentArray[0];
+
+        // localStorage.setItem('students', JSON.stringify([...otherStudentsArray,
+        // {
+        //     currentStudentArrayItem // this is wrong // check local storage for value
+        // }
+        // ])
+        // );
+
+
     }
 
     return (

@@ -25,8 +25,8 @@ export default function StudentSchedule() {
     // to be used as a prop for SubjectInputButton
     const [currentStudent, setCurrentStudent] = useState<Student>(
         {
-            firstName: "Arlee",
-            lastName: "Delgado",
+            firstName: "Test",
+            lastName: "Tester",
             course: "BSSE",
             year: 3,
             schedule: []
@@ -117,12 +117,12 @@ export default function StudentSchedule() {
 
 
     // handles input to paased to usernInput component
-    
+
     const handleStudentInput = (input?: Student) => {
         setStudentArray([...studentArray, input!]);
     }
 
- 
+
 
 
 
@@ -168,7 +168,7 @@ export default function StudentSchedule() {
                                 {studentOptions}
                             </Select>
                         </FormControl>
-                        <UserInputButton students={studentArray} setStudent={handleStudentInput}/>
+                        <UserInputButton students={studentArray} setStudent={handleStudentInput} />
                         <SubjectInputButton student={currentStudent} />
                     </>
                 break;
