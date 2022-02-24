@@ -37,7 +37,7 @@ const style = {
     width: '30ch',
 };
 
-export default function UserInputButton(props: {students: Student[], setStudent: any}) {
+export default function UserInputButton(props: { students: Student[], setStudent: any }) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [course, setCourse] = useState('');
@@ -46,7 +46,7 @@ export default function UserInputButton(props: {students: Student[], setStudent:
     const [courseError, setCourseError] = useState(false);
     const [year, setYear] = useState(9);
 
-  
+
 
 
 
@@ -92,21 +92,21 @@ export default function UserInputButton(props: {students: Student[], setStudent:
 
         if (firstName && lastName && course) {
             localStorage.setItem('students', JSON.stringify([...props.students,
-                {
-                    firstName: firstName,
-                    lastName: lastName,
-                    course: course,
-                    year: year,
-                    schedule: []
-                }]));
-            props.setStudent(
             {
                 firstName: firstName,
                 lastName: lastName,
                 course: course,
                 year: year,
                 schedule: []
-            })
+            }]));
+            props.setStudent(
+                {
+                    firstName: firstName,
+                    lastName: lastName,
+                    course: course,
+                    year: year,
+                    schedule: []
+                })
         }
         //^ this works bruh
 

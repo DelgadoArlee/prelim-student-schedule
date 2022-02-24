@@ -17,6 +17,7 @@ import Checkbox from '@mui/material/Checkbox';
 
 
 import { students, Subject, Student } from "../../fakedata/students";
+import Calendar from '../Calendar/Calendar';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -36,12 +37,17 @@ interface SubjectInputButtonProps {
     student: Student
 }
 
+var beenInitialized = false;
+
 export default function SubjectInputButton(props: SubjectInputButtonProps) {
     // import the events from the calendar and reload it or check the code in studentSchedule and how it reloads the subjects
     // have to pull the student array
 
     const [studentSchedule, setStudentSchedule] = useState([...props.student.schedule]);
     // ^ initialized at the onset as an empty array due to the placeholder value for currentStudent in StudentSchedule I think
+    console.log('inital studentSchedule value', studentSchedule);
+    console.log('initial student', props.student.firstName);
+    console.log('initial props.student.schedule', props.student.schedule);
 
 
     const [subject, setSubject] = useState('');
@@ -102,10 +108,14 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
         console.log('props.student.schedule', [...props.student.schedule])
     }
 
-    // function settingProperScheduleBeforeAddingSubject() {
-    //     setStudentSchedule([...props.student.schedule]);
-    //     addSubject();
-    // }
+    function settingProperScheduleBeforeAddingSubject() {
+        if (!beenInitialized) {
+            setStudentSchedule([...props.student.schedule]);
+            beenInitialized = true;
+        }
+        // setStudentSchedule([...props.student.schedule]);
+        //     addSubject();
+    }
 
 
     // include enter click function here
@@ -142,6 +152,17 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
             }
             ])
             // this is run before above set schedule is run I think
+
+            // localStorage.setItem('students', JSON.stringify([...props.students,
+            // {
+            //     firstName: firstName,
+            //     lastName: lastName,
+            //     course: course,
+            //     year: year,
+            //     schedule: []
+            // }]));
+            // ^ have to implement something similar
+
         }
         // setStudentArray([...studentArray,
         // {
@@ -296,7 +317,7 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
                         {/* End of color dropdown */}
 
 
-                        <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" onClick={addSubject}>Enter</Button>
+                        <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" onClick={addSubject} onMouseOver={settingProperScheduleBeforeAddingSubject}>Enter</Button>
                         <Button style={{ marginTop: 20 }} variant="contained" onClick={printStudentArray}>Print Array Test</Button>
                         {/*^button just for testing */}
                     </div>
