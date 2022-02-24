@@ -37,7 +37,7 @@ const style = {
     width: '30ch',
 };
 
-export default function UserInputButton() {
+export default function UserInputButton(props: {students: Student[], setStudent: any}) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [course, setCourse] = useState('');
@@ -46,11 +46,9 @@ export default function UserInputButton() {
     const [courseError, setCourseError] = useState(false);
     const [year, setYear] = useState(9);
 
-    const [studentArray, setStudentArray] = useState<Student[]>([...getStudentsFromLS()]);
+  
 
-    useEffect(() => {
-        localStorage.setItem('students', JSON.stringify(studentArray));
-    }, [studentArray])
+
 
 
     // for modal window
@@ -70,7 +68,7 @@ export default function UserInputButton() {
 
     // just for testing remove after
     function printStudentArray() {
-        console.log(studentArray)
+        console.log(students)
     }
 
 
@@ -93,14 +91,22 @@ export default function UserInputButton() {
         }
 
         if (firstName && lastName && course) {
-            setStudentArray([...studentArray,
+            localStorage.setItem('students', JSON.stringify([...props.students,
+                {
+                    firstName: firstName,
+                    lastName: lastName,
+                    course: course,
+                    year: year,
+                    schedule: []
+                }]));
+            props.setStudent(
             {
                 firstName: firstName,
                 lastName: lastName,
                 course: course,
                 year: year,
                 schedule: []
-            }])
+            })
         }
         //^ this works bruh
 
