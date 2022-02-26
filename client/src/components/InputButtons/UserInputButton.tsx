@@ -106,7 +106,7 @@ export default function UserInputButton() {
                     autoComplete="off"
                 >
                     <div>
-                        {/* Fetch Code */}
+                        {/* Fetch Code for the submit form, Currently not Sending to db, see api folder for api route code and controller for query code */}
                         <form onSubmit={e =>{
                             e.preventDefault()
                             console.log( formState)
