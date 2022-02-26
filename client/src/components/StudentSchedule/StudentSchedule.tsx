@@ -3,8 +3,6 @@ import { AppBar, FormControl, Select, SelectChangeEvent, MenuItem, Toolbar, Inpu
 import { students, Subject, Student } from "../../fakedata/students";
 import Calendar from "../Calendar/Calendar";
 import colors from "../../styles/colors";
-import { border } from '@mui/system';
-
 import SubjectInputButton from '../InputButtons/SubjectInputButton';
 import UserInputButton from '../InputButtons/UserInputButton';
 
@@ -80,7 +78,6 @@ export default function StudentSchedule() {
     };
 
 
-
     const handleOptionChange = (event: SelectChangeEvent) => {
         const {
             target: { value },
@@ -121,9 +118,6 @@ export default function StudentSchedule() {
     const handleStudentInput = (input?: Student) => {
         setStudentArray([...studentArray, input!]);
     }
-
- 
-
 
 
     const handleStudentAChange = (event: SelectChangeEvent) => {
@@ -168,7 +162,7 @@ export default function StudentSchedule() {
                                 {studentOptions}
                             </Select>
                         </FormControl>
-                        <UserInputButton students={studentArray} setStudent={handleStudentInput}/>
+                        <UserInputButton/>
                         <SubjectInputButton student={currentStudent} />
                     </>
                 break;
