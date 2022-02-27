@@ -1,5 +1,5 @@
 import prisma from "../services/database";
-import { Student, Subject } from "@prisma/client";
+import { Student } from "@prisma/client";
 
 
 
