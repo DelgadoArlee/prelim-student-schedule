@@ -5,7 +5,8 @@ import cors from "cors";
 
 //Routes
 import helloRouter from "./api/hello";
-import studentRouter from "./api/student";
+import postRouter from "./api/post";
+import getRouter from "./api/get";
 
 
 
@@ -20,8 +21,9 @@ app.use(cors());
 app.use(json())
 
 //Routers
-app.use("/api", helloRouter)
-app.use("/student", studentRouter);
+app.use("/api", helloRouter);
+app.use("/post", postRouter);
+app.use("/get", getRouter);
 
 
 export default app;
