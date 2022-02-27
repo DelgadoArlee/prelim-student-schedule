@@ -1,4 +1,5 @@
-import React, { useState, useReducer, SetStateAction, SyntheticEvent } from 'react';
+import React, { useState, useReducer, FormEvent } from 'react';
+import axios from "axios";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
@@ -89,13 +90,52 @@ export default function UserInputButton() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    const handleSubmit = ( e: FormEvent ) => {
+        e.preventDefault();
+
+        axios.post(
+            'http://localhost:5000/student/createStudent',
+            formState
+        )
+        .then( res => {
+            console.log(res.data)
+            return res.data;
+        })
+        .catch( err => {
+            if (err.response){
+                console.log(err.response);
+            } else if (err.request){
+                console.log(err.request);
+            } else{
+                console.log(err.message);
+            }
+            console.log(err.config);
+        })
+     
+            // console.log( formState)
+    
+            // fetch(
+            //   'http://localhost:5000/student/createStudent',
+            //   {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(formState)
+            //   }
+            // )
+            // .then(res => res.json())
+            // .then(data => console.log(data))
+            // .catch( error => console.log(error))
+      
+    }
+
 
     return (
         <div style={{ margin: 4 }}>
+            <form onSubmit={handleSubmit}> 
             <Button variant="contained" onClick={handleOpen}>Input User</Button>
             <Modal
                 open={open}
-                // onClose={handleClose}
+                onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -106,30 +146,13 @@ export default function UserInputButton() {
                     autoComplete="off"
                 >
                     <div>
-                        {/* Fetch Code for the submit form, Currently not Sending to db, see api folder for api route code and controller for query code */}
-                        <form onSubmit={e =>{
-                            e.preventDefault()
-                            console.log( formState)
-                    
-                            fetch(
-                              'http://localhost:5000/student/createStudent',
-                              {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(formState)
-                              }
-                            )
-                            .then(res => res.json())
-                            .then(data => console.log(data))
-                            .catch( error => console.log(error))
-                        }}> 
-
                             Input the User's Details Here:
                             <TextField style={{ marginTop: 20 }}
                                 onChange={e =>  dispatch({key:'FirstName', value: e.target.value})}
                                 id="firstname-input-field"
                                 label="Firstname"
                                 placeholder="Juan"
+                                value={formState.firstName}
                                 multiline
                                 required
                                 error={firstNameError}
@@ -139,6 +162,7 @@ export default function UserInputButton() {
                                 id="lastname-input-field"
                                 label="Lastname"
                                 placeholder="Garcia"
+                                value={formState.lastName}
                                 multiline
                                 required
                                 error={lastNameError}
@@ -148,6 +172,7 @@ export default function UserInputButton() {
                                 id="course-input-field"
                                 label="Course"
                                 placeholder="BSSE"
+                                value={formState.course}
                                 multiline
                                 required
                                 error={courseError}
@@ -162,6 +187,7 @@ export default function UserInputButton() {
                                     labelId="demo-simple-select-helper-label"
                                     id="demo-simple-select-helper"
                                     label="Year"
+                                    value={formState.year}
                                     onChange={e => dispatch({key:'Year', value: Number(e.target.value)})}
                                 >
                                     <MenuItem value={1}>First Year</MenuItem>
@@ -175,10 +201,11 @@ export default function UserInputButton() {
 
                             </FormControl>
                             <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" type="submit">Submit</Button>
-                        </form>
+                      
                     </div>
                 </Box>
             </Modal>
+            </form>
         </div>
     );
 }
