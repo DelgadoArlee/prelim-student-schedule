@@ -4,10 +4,10 @@ import  { createStudent }  from "../controllers/student";
 const router: Router = express.Router();
 
 router.post('/createStudent', async (req: Request, res: Response, next: NextFunction) => {
-    const  student = await req.body;
+    const  student =  req.body;
 
     return createStudent( student )
-            .then(data => console.log("student Added"))
+            .then(data => res.send("Student Added"))
             .catch((err:any) => res.status(400).send(err));
 });
 
