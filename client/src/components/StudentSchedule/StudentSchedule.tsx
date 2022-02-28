@@ -94,24 +94,6 @@ export default function StudentSchedule() {
 
     }
 
-    // not sure
-    const handleAddSubject = (event: SelectChangeEvent) => {
-        const {
-            target: { value },
-        } = event;
-
-        const index: number = parseInt(value);
-
-        const student = studentArray[index];
-
-        setSchedule(setTitleAndColor([...student.schedule], student));
-
-        setCurrentStudent(student); // sets a value for the prop to be used for the subjectInputButton
-
-        console.log(studentArray) // added this for testing to be removed
-        console.log(student)
-        console.log([...getStudentsFromLS()]) // added this for testing to be removed
-    };
 
 
     const handleStudentChange = (event: SelectChangeEvent) => {
@@ -132,6 +114,11 @@ export default function StudentSchedule() {
         console.log([...getStudentsFromLS()]) // added this for testing to be removed
     };
 
+
+    const updateStudentArray = () => {
+        setStudentArray([...getStudentsFromLS()])
+        return ''
+    }
 
     // handles input to paased to usernInput component
 
@@ -178,7 +165,7 @@ export default function StudentSchedule() {
                             <InputLabel >
                                 <em>Student</em>
                             </InputLabel>
-                            <Select autoWidth label="Student" onChange={handleStudentChange}>
+                            <Select autoWidth label="Student" onChange={handleStudentChange} onMouseOver={updateStudentArray}>
                                 {studentOptions}
                             </Select>
                         </FormControl>
