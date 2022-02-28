@@ -27,7 +27,86 @@ export default function StudentSchedule() {
             lastName: "Delgado",
             course: "BSSE",
             year: 3,
-            schedule: []
+            schedule: [
+                {
+                    title: "Emath2200",
+                    startTime: '10:00:00',
+                    endTime: "12:00:00",
+                    daysOfWeek: [5]
+                },
+                {
+                    title: "SE2221 - Lec",
+                    startTime: '10:00:00',
+                    endTime: "11:00:00",
+                    daysOfWeek: [1, 2]
+                },
+                {
+                    title: "SE2221 - Lab",
+                    startTime: '10:00:00',
+                    endTime: "13:00:00",
+                    daysOfWeek: [4]
+                },
+                {
+                    title: "SE2222 - Lec",
+                    startTime: '7:00:00',
+                    endTime: "9:00:00",
+                    daysOfWeek: [4]
+                },
+                {
+                    title: "SE2222 - Lab",
+                    startTime: '7:00:00',
+                    endTime: "10:00:00",
+                    daysOfWeek: [5]
+                },
+                {
+                    title: "SE2223 - Lec",
+                    startTime: '7:00:00',
+                    endTime: "10:00:00",
+                    daysOfWeek: [1]
+                },
+                {
+                    title: "SE2223 - Lab",
+                    startTime: '7:00:00',
+                    endTime: "10:00:00",
+                    daysOfWeek: [2]
+                },
+                {
+                    title: "SE2224 - Lec",
+                    startTime: '19:00:00',
+                    endTime: "20:30:00",
+                    daysOfWeek: [1, 4]
+                },
+                {
+                    title: "SE2224 - Lab",
+                    startTime: '13:00:00',
+                    endTime: "16:00:00",
+                    daysOfWeek: [6]
+                },
+                {
+                    title: "SE2225 - Lec",
+                    startTime: '16:00:00',
+                    endTime: "17:30:00",
+                    daysOfWeek: [1, 5]
+                },
+                {
+                    title: "SE2225 - Lab",
+                    startTime: '16:00:00',
+                    endTime: "17:30:00",
+                    daysOfWeek: [2, 4]
+                },
+                {
+                    title: "SE2226 - Lec",
+                    startTime: '14:00:00',
+                    endTime: "16:00:00",
+                    daysOfWeek: [5]
+                },
+                {
+                    title: "SE2226 - Lec",
+                    startTime: '13:00:00',
+                    endTime: "16:00:00",
+                    daysOfWeek: [2]
+                }
+            ]
         }
     ); //^ placeholder value so it won't be undefined
 
