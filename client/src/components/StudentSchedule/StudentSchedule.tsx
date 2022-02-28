@@ -30,6 +30,7 @@ export default function StudentSchedule() {
       ;
     }, [])
 
+    // Options for Dropdown menus //
     const studentOptions = students.map((student) => {
             let name = `${student.firstName}  ${student.lastName}`
         
@@ -38,7 +39,7 @@ export default function StudentSchedule() {
                 )
         })
    
-       
+    //Changes the Calender View // 
     const handleOptionChange = (e: SelectChangeEvent) => {
         const value = e.target.value
         setSchedule([])

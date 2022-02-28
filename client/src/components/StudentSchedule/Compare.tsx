@@ -12,13 +12,14 @@ export default function Compare(props: {options: JSX.Element[], setSchedule: Dis
     const [subjectsB, setSubjectsB] = useState<Subject[]>([]);
 
 
-
+    // handles the select of 1st dropdown //
     const handleStudentAChange = (e: SelectChangeEvent) => {
         const id: number = Number(e.target.value)
 
         setStudentA(id)
     }
 
+    // handles the select of 2nd dropdown //
     const handleStudentBChange = (e: SelectChangeEvent) => {
         const id: number = Number(e.target.value)
   
@@ -26,7 +27,7 @@ export default function Compare(props: {options: JSX.Element[], setSchedule: Dis
         setStudentB(id)
     }
 
-    
+    //gets subjects of Student A //
     useEffect(() => {
         axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentA}})
         .then(res => {
@@ -46,7 +47,7 @@ export default function Compare(props: {options: JSX.Element[], setSchedule: Dis
       ;
     }, [studentA])
 
-   
+   // gets subjects of Student B // 
     useEffect(() => {
         axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentB}})
         .then(res => {
