@@ -17,6 +17,7 @@ import Checkbox from '@mui/material/Checkbox';
 
 
 import { students, Subject, Student } from "../../fakedata/students";
+import Calendar from '../Calendar/Calendar';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -32,9 +33,21 @@ const style = {
     width: '30ch',
 };
 
+const getStudentsFromLS = () => {
+    const data = localStorage.getItem('students');
+    if (data) {
+        return JSON.parse(data);
+    }
+    else {
+        return []
+    }
+}
+
 interface SubjectInputButtonProps {
     student: Student
 }
+
+var beenInitialized = false;
 
 export default function SubjectInputButton(props: SubjectInputButtonProps) {
     // import the events from the calendar and reload it or check the code in studentSchedule and how it reloads the subjects
@@ -42,6 +55,9 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
 
     const [studentSchedule, setStudentSchedule] = useState([...props.student.schedule]);
     // ^ initialized at the onset as an empty array due to the placeholder value for currentStudent in StudentSchedule I think
+    // console.log('inital studentSchedule value', studentSchedule);
+    // console.log('initial student', props.student.firstName);
+    // console.log('initial props.student.schedule', props.student.schedule);
 
 
     const [subject, setSubject] = useState('');
@@ -50,6 +66,39 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
     const [subjectError, setSubjectError] = useState(false);
     const [timeslotStartError, setTimeslotStartError] = useState(false);
     const [timeslotEndError, setTimeslotEndError] = useState(false)
+
+
+    useEffect(() => {
+        var studentArray = [...getStudentsFromLS()];
+
+        var currentStudentArray = studentArray.filter((element) => {
+            if (element.firstName == props.student.firstName) {
+                return element
+            }
+        })
+
+        var otherStudentsArray = studentArray.filter((element) => {
+            if (element.firstName !== props.student.firstName) {
+                return element
+            }
+        })
+
+        function setNewSchedule() {
+            currentStudentArray[0].schedule = studentSchedule
+        }
+        setNewSchedule()
+        var currentStudentArrayItem = currentStudentArray[0];
+
+        localStorage.setItem('students', JSON.stringify([...otherStudentsArray,
+
+            currentStudentArrayItem // this is wrong // check local storage for value
+
+        ])
+        );
+
+        console.log('filter student array', currentStudentArray)
+        console.log('other students array', otherStudentsArray)
+    }, [studentSchedule])
 
     // hacky solution
     // useEffect(() => {
@@ -98,14 +147,19 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
     function printStudentArray() {
         // setStudentSchedule([...props.student.schedule]); // first time printed it's equal to 0 probably coz console.log appears first
         console.log('student name', props.student.firstName)
+        console.log('student object',)
         console.log('studentSchedule', studentSchedule)
         console.log('props.student.schedule', [...props.student.schedule])
     }
 
-    // function settingProperScheduleBeforeAddingSubject() {
-    //     setStudentSchedule([...props.student.schedule]);
-    //     addSubject();
-    // }
+    function settingProperScheduleBeforeAddingSubject() {
+        if (!beenInitialized) {
+            setStudentSchedule([...props.student.schedule]);
+            beenInitialized = true;
+        }
+        // setStudentSchedule([...props.student.schedule]);
+        //     addSubject();
+    }
 
 
     // include enter click function here
@@ -133,45 +187,94 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
             // setStudentSchedule([...props.student.schedule]);
             console.log('studentSchedule', studentSchedule)
             console.log('props.student.schedule', [...props.student.schedule])
+
+            // for loop for days of the week
+            var daysBoolean = Object.entries(day).map(([key, value]) => {
+
+                if (value) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            })
+
+            var daysSelected: number[] = []
+            daysBoolean.forEach((element, index) => {
+                if (element) {
+                    daysSelected.push(index)
+                }
+            })
+
+            console.log('days boolean', daysBoolean)
+            console.log('days selected', daysSelected)
             setStudentSchedule([...studentSchedule,
             {
                 title: subject,
                 startTime: timeslotStartTime,
                 endTime: timeslotEndTime,
-                daysOfWeek: [5]
+                daysOfWeek: daysSelected
             }
             ])
-            // this is run before above set schedule is run I think
+            // var studentArray = [...getStudentsFromLS()];
+
+            // var currentStudentArray = studentArray.filter((element) => {
+            //     if (element.firstName == props.student.firstName) {
+            //         return element
+            //     }
+            // })
+
+            // var otherStudentsArray = studentArray.filter((element) => {
+            //     if (element.firstName !== props.student.firstName) {
+            //         return element
+            //     }
+            // })
+
+            // function setNewSchedule() {
+            //     currentStudentArray[0].schedule = studentSchedule
+            // }
+            // setNewSchedule()
+            // var currentStudentArrayItem = currentStudentArray[0];
+
+            // localStorage.setItem('students', JSON.stringify([...otherStudentsArray,
+
+            //     currentStudentArrayItem // this is wrong // check local storage for value
+
+            // ])
+            // );
+
+            // console.log('filter student array', currentStudentArray)
+            // console.log('other students array', otherStudentsArray)
+            console.log('student name', props.student.firstName)
+
         }
-        // setStudentArray([...studentArray,
-        // {
-        //     title: "Bruh",
-        //     startTime: '5:00:00',
-        //     endTime: "6:00:00",
-        //     daysOfWeek: [5]
-        // }])
+        // var studentArray = [...getStudentsFromLS()];
 
-        // setStudentArray([...studentArray,
-        // {
-        //     firstName: "Bruh",
-        //     lastName: "Delgado",
-        //     course: "BSSE",
-        //     year: 3,
-        //     schedule: []
-        // }])
-        //^ this works bruh
+        // var currentStudentArray = studentArray.filter((element) => {
+        //     if (element.firstName == props.student.firstName) {
+        //         return element
+        //     }
+        // })
 
-        // )
-        // students[0].schedule.push(
-        //    {
-        //     title: "Bruh",
-        //     startTime: '5:00:00',
-        //     endTime: "6:00:00",
-        //     daysOfWeek: [5]
+        // var otherStudentsArray = studentArray.filter((element) => {
+        //     if (element.firstName !== props.student.firstName) {
+        //         return element
+        //     }
+        // })
+
+        // function setNewSchedule() {
+        //     currentStudentArray[0].schedule = studentSchedule
         // }
-        //)
-        // console.log('bruh')
-        console.log('student name', props.student.firstName)
+        // setNewSchedule()
+        // var currentStudentArrayItem = currentStudentArray[0];
+
+        // localStorage.setItem('students', JSON.stringify([...otherStudentsArray,
+        // {
+        //     currentStudentArrayItem // this is wrong // check local storage for value
+        // }
+        // ])
+        // );
+
     }
 
     return (
@@ -296,7 +399,7 @@ export default function SubjectInputButton(props: SubjectInputButtonProps) {
                         {/* End of color dropdown */}
 
 
-                        <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" onClick={addSubject}>Enter</Button>
+                        <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" onClick={addSubject} onMouseOver={settingProperScheduleBeforeAddingSubject}>Enter</Button>
                         <Button style={{ marginTop: 20 }} variant="contained" onClick={printStudentArray}>Print Array Test</Button>
                         {/*^button just for testing */}
                     </div>
