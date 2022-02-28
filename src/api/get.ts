@@ -9,16 +9,16 @@ const router: Router = express.Router();
 router.get('/students', (req: Request, res: Response, next: NextFunction) => [
     getStudents()
     .then( students => res.send(students))
-    .then(err => err.status(400).send(err))
+    .catch(err => err.status(400).send(err))
 ])
 
 //sends a specific student subjects from db
-router.get('/student/subjects', (req: Request, res: Response, next: NextFunction) => {
+router.get('/studentSubjects', (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.body;
 
     getStudentSubjects(id)
     .then(subjects => res.send(subjects))
-    .then(err => err.status(400).send(err));
+    .catch(err => err.status(400).send(err));
 })
 
 
