@@ -1,200 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, FormControl, Select, SelectChangeEvent, MenuItem, Toolbar, InputLabel, Button } from "@mui/material";
-import { students, Subject, Student } from "../../fakedata/students";
+import axios from "axios";
+import { Student, Subject, SubjectCard } from '../../objects/objects';
+import View from './View';
+import Compare from "./Compare";
 import Calendar from "../Calendar/Calendar";
-import colors from "../../styles/colors";
-import SubjectInputButton from '../InputButtons/SubjectInputButton';
 import UserInputButton from '../InputButtons/UserInputButton';
 
-const getStudentsFromLS = () => {
-    const data = localStorage.getItem('students');
-    if (data) {
-        return JSON.parse(data);
-    }
-    else {
-        return []
-    }
-}
 
-// var localStorageHasBeenRun = false;
 
 export default function StudentSchedule() {
-
-    // to be used as a prop for SubjectInputButton
-    const [currentStudent, setCurrentStudent] = useState<Student>(
-        {
-            firstName: "Arlee",
-            lastName: "Delgado",
-            course: "BSSE",
-            year: 3,
-            schedule: []
-        }
-    ); //^ placeholder value so it won't be undefined
-
-    //fake student data saved to ls
-    // localStorage.setItem('students', JSON.stringify(students))
-    // if (!localStorageHasBeenRun) {
-    //     localStorage.setItem('students', JSON.stringify(students))
-    //     localStorageHasBeenRun = true;
-    // }
-
-    const [studentArray, setStudentArray] = useState<Student[]>([...getStudentsFromLS()]);
-
+    const [students, setStudents] = useState<Student[]>([]);
+    const [scheduleView, setScheduleView] = useState<JSX.Element>();
+    const [schedule, setSchedule] = useState<SubjectCard[]>([]);
 
     useEffect(() => {
-        localStorage.setItem('students', JSON.stringify(studentArray));
-    }, [studentArray])
-
-
-    const [view, setView] = useState<string>("");
-
-    const [schedule, setSchedule] = useState<Subject[]>([]);
-    const [studentA, setStudentA] = useState<Student>();
-    const [studentB, setStudentB] = useState<Student>();
-
-    const studentOptions = studentArray.map((student, index) => {
-        let name = `${student.firstName}  ${student.lastName}`
-
-        return (
-            <MenuItem value={index}>{name}</MenuItem>
-        )
-    })
-
-    const setTitleAndColor = (subjects: Subject[], student: Student, color?: string, borderColor?: string) => {
-
-        return [...subjects].map((subject: Subject, index: number) => {
-            subject.color = (typeof color !== "undefined") ? color : colors[index]
-            subject.title = ''
-            subject.title = `${subject.title} - ${student.firstName}  ${student.lastName}`
-
-            if (borderColor) {
-                subject.borderColor = borderColor
+        axios.get("http://localhost:5000/get/students")
+        .then(res => setStudents(res.data))
+        .catch( err => {
+            if (err.response){
+                console.log(err.response);
+            } else if (err.request){
+                console.log(err.request);
+            } else{
+                console.log(err.message);
             }
+            console.log(err.config);
+        })    
+      ;
+    }, [])
 
-            return subject;
+    const studentOptions = students.map((student) => {
+            let name = `${student.firstName}  ${student.lastName}`
+        
+                return (
+                    <MenuItem value={student.id}>{name}</MenuItem>
+                )
         })
-
-
-    };
-
-
-    const handleOptionChange = (event: SelectChangeEvent) => {
-        const {
-            target: { value },
-        } = event
+   
+       
+    const handleOptionChange = (e: SelectChangeEvent) => {
+        const value = e.target.value
+        setSchedule([])
 
         switch (value) {
             case "view":
-                setView("view");
+                setScheduleView(<View options={studentOptions} setSchedule={setSchedule}/>);
                 break;
             case "compare":
-                setView("compare");
+                setScheduleView(<Compare options={studentOptions} setSchedule={setSchedule}/>);
                 break;
         }
 
     }
-
-    const handleStudentChange = (event: SelectChangeEvent) => {
-        const {
-            target: { value },
-        } = event;
-
-        const index: number = parseInt(value);
-
-        const student = studentArray[index];
-
-        setSchedule(setTitleAndColor([...student.schedule], student));
-
-        setCurrentStudent(student); // sets a value for the prop to be used for the subjectInputButton
-
-        console.log(studentArray) // added this for testing to be removed
-        console.log(student)
-        console.log([...getStudentsFromLS()]) // added this for testing to be removed
-    };
-
-
-    // handles input to paased to usernInput component
     
-    const handleStudentInput = (input?: Student) => {
-        setStudentArray([...studentArray, input!]);
-    }
-
-
-    const handleStudentAChange = (event: SelectChangeEvent) => {
-        const {
-            target: { value },
-        } = event;
-
-        const index: number = parseInt(value);
-
-        setStudentA(studentArray[index])
-    }
-
-    const handleStudentBChange = (event: SelectChangeEvent) => {
-        const {
-            target: { value },
-        } = event;
-
-        const index: number = parseInt(value);
-
-        setStudentB(studentArray[index])
-    }
-
-    const compare = () => {
-        const scheduleA: Subject[] = setTitleAndColor([...studentA!.schedule], studentA!, "", "red")
-        const scheduleB: Subject[] = setTitleAndColor([...studentB!.schedule], studentB!, "black", "red")
-
-        setSchedule([...scheduleA, ...scheduleB])
-    }
-
-    const scheduleView = () => {
-        let element: JSX.Element = <></>
-
-        switch (view) {
-            case "view":
-                element =
-                    <>
-                        <FormControl sx={{ m: 1, minWidth: 120 }}>
-                            <InputLabel >
-                                <em>Student</em>
-                            </InputLabel>
-                            <Select autoWidth label="Student" onChange={handleStudentChange}>
-                                {studentOptions}
-                            </Select>
-                        </FormControl>
-                        <UserInputButton/>
-                        <SubjectInputButton student={currentStudent} />
-                    </>
-                break;
-            case "compare":
-                element =
-                    <>
-                        <FormControl sx={{ m: 1, minWidth: 120 }}>
-                            <InputLabel>
-                                <em>StudentA</em>
-                            </InputLabel>
-                            <Select autoWidth label="StudentA" onChange={handleStudentAChange}>
-                                {studentOptions}
-                            </Select>
-                        </FormControl>
-                        <FormControl sx={{ m: 1, minWidth: 120 }}>
-                            <InputLabel>
-                                <em>StudentB</em>
-                            </InputLabel>
-                            <Select autoWidth label="StudentB" onChange={handleStudentBChange} >
-                                {studentOptions}
-                            </Select>
-                        </FormControl>
-                        <Button variant="contained" onClick={compare}>Compare</Button>
-                    </>
-                break;
-        }
-
-        return element;
-    }
-
-
-
+ 
     return (
         <>
             <AppBar position="static" color='transparent'>
@@ -203,16 +63,20 @@ export default function StudentSchedule() {
                         <InputLabel>
                             <em>Options</em>
                         </InputLabel>
-                        <Select autoWidth label="Options" onChange={handleOptionChange} >
+                        <Select autoWidth label="Options" onChange={handleOptionChange}  >
+                            <MenuItem></MenuItem>
                             <MenuItem value="view">View Schedule</MenuItem>
                             <MenuItem value="compare">Compare Schedule</MenuItem>
                         </Select>
                     </FormControl>
-                    {scheduleView()}
+                    {scheduleView}
+                    <UserInputButton/>
+                {/* <SubjectInputButton studentId={studentA} /> */}
+
                 </Toolbar>
             </AppBar>
 
-            <Calendar subjects={schedule} />
+            <Calendar schedule={schedule} />
         </>
 
     )
