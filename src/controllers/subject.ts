@@ -26,7 +26,7 @@ const createSubject = ({ studentId, title, startTime, endTime, days, allDay}: Su
 const getStudentSubjects = async ( id: number) => {
     return await prisma.subject.findMany({
         where:{
-            id: id
+            studentId: id
         }
     })
     
