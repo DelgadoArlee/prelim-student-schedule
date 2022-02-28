@@ -8,7 +8,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { Student } from "../../types/student";
+import { Student } from "../../objects/objects";
 
 
 
@@ -74,10 +74,6 @@ const studentFormReducer = (state: Student, action: FormAction) => {
 
 
 export default function UserInputButton() {
-    const [ firstNameError, setFirstNameError ] = useState(false);
-    const [ lastNameError, setLastNameError ] = useState(false);
-    const [ courseError, setCourseError ] = useState(false);
-    const [ yearError, setYearError ] = useState(false);
     const [formState, dispatch] = useReducer(studentFormReducer, {
         lastName: '', 
         firstName: '', 
@@ -94,7 +90,7 @@ export default function UserInputButton() {
         e.preventDefault();
 
         axios.post(
-            'http://localhost:5000/student/createStudent',
+            'http://localhost:5000/post/student',
             formState
         )
         .then( res => {
@@ -110,21 +106,7 @@ export default function UserInputButton() {
                 console.log(err.message);
             }
             console.log(err.config);
-        })
-     
-            // console.log( formState)
-    
-            // fetch(
-            //   'http://localhost:5000/student/createStudent',
-            //   {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(formState)
-            //   }
-            // )
-            // .then(res => res.json())
-            // .then(data => console.log(data))
-            // .catch( error => console.log(error))
+        })    
       
     }
 
@@ -155,7 +137,7 @@ export default function UserInputButton() {
                                 value={formState.firstName}
                                 multiline
                                 required
-                                error={firstNameError}
+
                             />
                             <TextField style={{ marginTop: 20 }}
                                 onChange={e => dispatch({key:'LastName', value: e.target.value})}
@@ -165,7 +147,7 @@ export default function UserInputButton() {
                                 value={formState.lastName}
                                 multiline
                                 required
-                                error={lastNameError}
+
                             />
                             <TextField style={{ marginTop: 20 }}
                                 onChange={e => dispatch({key:'Course', value: e.target.value})}
@@ -175,7 +157,7 @@ export default function UserInputButton() {
                                 value={formState.course}
                                 multiline
                                 required
-                                error={courseError}
+
                             // helperText="Incorrect entry."
                             //^included error and helperText here idk how it'll be implemented yet
                             />
@@ -189,6 +171,7 @@ export default function UserInputButton() {
                                     label="Year"
                                     value={formState.year}
                                     onChange={e => dispatch({key:'Year', value: Number(e.target.value)})}
+                                    required
                                 >
                                     <MenuItem value={1}>First Year</MenuItem>
                                     <MenuItem value={2}>Second Year</MenuItem>
