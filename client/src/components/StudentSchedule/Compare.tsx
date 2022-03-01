@@ -68,7 +68,7 @@ export default function Compare(props: {options: JSX.Element[], setSchedule: Dis
     }, [studentB])
 
     //Compare Button handler
-    const handleOnClick = () => props.setSchedule([...mapToCards(subjectsA, "blue", "black"), ...mapToCards(subjectsB, "red", "black")])
+    const handleOnClick = () => props.setSchedule([...mapToCards(subjectsA, undefined, "blue", "black"), ...mapToCards(subjectsB, undefined, "red", "black")])
 
 
 

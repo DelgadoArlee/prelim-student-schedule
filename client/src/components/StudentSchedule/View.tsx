@@ -3,22 +3,24 @@ import {  FormControl, Select, SelectChangeEvent, InputLabel, MenuItem  } from "
 import axios from "axios";
 import {  Subject, SubjectCard } from "../../objects/objects";
 import { mapToCards } from "../../helper/helpers";
+import SubjectInputButton from "../InputButtons/SubjectInputButton";
 
 
 export default function View(props: {options: JSX.Element[], setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}){
-    const [student, setStudent] = useState<number>();
+    const [studentId, setStudentId] = useState<number>();
     
     // Sets the Id to the Student selected in the dropdown //
     const handleStudentChange = (e: SelectChangeEvent) => {
+        console.log(e.target.value)
         const id: number = Number(e.target.value)
 
-        setStudent(id)
+        setStudentId(id)
     }
 
 
     // fetches the subject of the selected student // 
     useEffect(() => {
-        axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: student}})
+        axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentId}})
         .then(res => props.setSchedule(mapToCards(res.data)))
         .catch( err => {
             if (err.response){
@@ -30,7 +32,7 @@ export default function View(props: {options: JSX.Element[], setSchedule: Dispat
             }
             console.log(err.config);
         });
-    }, [student])
+    }, [studentId])
 
 
 
@@ -45,7 +47,10 @@ export default function View(props: {options: JSX.Element[], setSchedule: Dispat
                     {props.options}
                 </Select>
             </FormControl>
-
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+                <SubjectInputButton studentId={studentId} setSchedule={props.setSchedule} />
+            </FormControl>
+            
         </>
     )
 }

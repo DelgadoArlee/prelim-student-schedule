@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
 import { AppBar, FormControl, Select, SelectChangeEvent, MenuItem, Toolbar, InputLabel, Button } from "@mui/material";
 import axios from "axios";
-import { Student, Subject, SubjectCard } from '../../objects/objects';
-import View from './View';
+import { Student,  SubjectCard } from '../../objects/objects';
+import View from "./View";
 import Compare from "./Compare";
 import Calendar from "../Calendar/Calendar";
 import UserInputButton from '../InputButtons/UserInputButton';
@@ -14,6 +14,8 @@ export default function StudentSchedule() {
     const [scheduleView, setScheduleView] = useState<JSX.Element>();
     const [schedule, setSchedule] = useState<SubjectCard[]>([]);
 
+
+    // Gets all Studnets from db //
     useEffect(() => {
         axios.get("http://localhost:5000/get/students")
         .then(res => setStudents(res.data))
@@ -54,6 +56,8 @@ export default function StudentSchedule() {
         }
 
     }
+   
+
     
  
     return (
