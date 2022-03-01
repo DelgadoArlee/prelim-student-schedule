@@ -7,14 +7,12 @@ interface Student{
 }
 
 interface Subject{
-    id?: string
+    studentId?: number
     title: string
     startTime: string
     endTime: string
     days: number[]
     allDay: boolean
-    color?: string
-    borderColor?: string
 }
 
 interface SubjectCard {
