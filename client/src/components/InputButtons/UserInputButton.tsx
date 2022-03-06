@@ -1,12 +1,15 @@
 import React, { useState, useReducer, FormEvent, Dispatch, SetStateAction } from 'react';
 import axios from "axios";
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
+import {
+    Box,
+    Stack,
+    Button,
+    Modal,
+    TextField,
+    InputLabel,
+    MenuItem,
+    FormControl
+} from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Student } from "../../objects/objects";
 
@@ -28,6 +31,9 @@ const style = {
 
 
 type FormAction = {
+    key: "Id"
+    value: number
+} | {
     key: 'LastName'
     value: string
 } | {
@@ -46,6 +52,11 @@ const valid  = ( value: string | number  ) => typeof value == "string"? value !=
 const studentFormReducer = (state: Student, action: FormAction) => {
     console.log(state)
     switch (action.key) {
+        case 'Id':
+            return {
+                ...state,
+                id: action.value
+            }
         case 'LastName':
             return {
                 ...state,
@@ -75,6 +86,7 @@ const studentFormReducer = (state: Student, action: FormAction) => {
 
 export default function UserInputButton() {
     const [formState, dispatch] = useReducer(studentFormReducer, {
+        id: undefined,
         lastName: '', 
         firstName: '', 
         course: '', 
@@ -107,13 +119,15 @@ export default function UserInputButton() {
             }
             console.log(err.config);
         })
+
+        handleClose()
+
       
     }
 
 
     return (
         <div style={{ margin: 4 }}>
-            <form onSubmit={handleSubmit}> 
             <Button variant="contained" onClick={handleOpen}>Input User</Button>
             <Modal
                 open={open}
@@ -123,18 +137,33 @@ export default function UserInputButton() {
             >
                 <Box
                     component="form"
+                    onSubmit={handleSubmit}
                     sx={style}
                     noValidate
                     autoComplete="off"
                 >
-                    <div>
+                    <Stack>
                             Input the User's Details Here:
+                            <TextField style={{ marginTop: 20 }}
+                                onChange={e =>  dispatch({key:'Id', value: Number(e.target.value)})}
+                                id="id-input-field"
+                                label="ID No."
+                                type="number"
+                                variant="standard"
+                                size="small"
+                                fullWidth
+                                multiline
+                                required
+
+                            />
                             <TextField style={{ marginTop: 20 }}
                                 onChange={e =>  dispatch({key:'FirstName', value: e.target.value})}
                                 id="firstname-input-field"
                                 label="Firstname"
                                 placeholder="Juan"
-                                value={formState.firstName}
+                                variant="standard"
+                                size="small"
+                                fullWidth
                                 multiline
                                 required
 
@@ -144,7 +173,9 @@ export default function UserInputButton() {
                                 id="lastname-input-field"
                                 label="Lastname"
                                 placeholder="Garcia"
-                                value={formState.lastName}
+                                variant="standard"
+                                size="small"
+                                fullWidth
                                 multiline
                                 required
 
@@ -154,7 +185,9 @@ export default function UserInputButton() {
                                 id="course-input-field"
                                 label="Course"
                                 placeholder="BSSE"
-                                value={formState.course}
+                                variant="standard"
+                                size="small"
+                                fullWidth
                                 multiline
                                 required
 
@@ -163,13 +196,15 @@ export default function UserInputButton() {
                             />
 
                             {/*Year drop down */}
-                            <FormControl style={{ marginTop: 20, width: '15ch' }}>
+                            <FormControl style={{ marginTop: 20}}>
                                 <InputLabel id="demo-simple-select-helper-label">Year Level</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-helper-label"
                                     id="demo-simple-select-helper"
                                     label="Year"
-                                    value={formState.year}
+                                    variant="standard"
+                                    size="small"
+                                    fullWidth
                                     onChange={e => dispatch({key:'Year', value: Number(e.target.value)})}
                                     required
                                 >
@@ -185,10 +220,9 @@ export default function UserInputButton() {
                             </FormControl>
                             <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" type="submit">Submit</Button>
                       
-                    </div>
+                    </Stack>
                 </Box>
             </Modal>
-            </form>
         </div>
     );
 }
