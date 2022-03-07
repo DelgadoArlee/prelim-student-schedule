@@ -60,17 +60,17 @@ const studentFormReducer = (state: Student, action: FormAction) => {
         case 'LastName':
             return {
                 ...state,
-                lastName: action.value
+                lastName: action.value.toUpperCase()
             }
         case 'FirstName':
             return {
                 ...state,
-                firstName: action.value
+                firstName: action.value.toUpperCase()
             }
         case 'Course':
             return {
                 ...state,
-                course: action.value
+                course: action.value.toUpperCase()
             }
         case 'Year':
             return {
@@ -145,10 +145,10 @@ export default function AddStudentForm() {
                     <Stack>
                             Input the User's Details Here:
                             <TextField style={{ marginTop: 20 }}
+                                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                                 onChange={e =>  dispatch({key:'Id', value: Number(e.target.value)})}
                                 id="id-input-field"
                                 label="ID No."
-                                type="number"
                                 variant="standard"
                                 size="small"
                                 fullWidth
