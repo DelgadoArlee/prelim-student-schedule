@@ -10,9 +10,10 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef, GridSelectionModel } from '@mui/x-data-grid';
 import axios from 'axios';
+import NewSubjectForm from '../Forms/NewSubjectForm';
 import { Subject, SubjectCard } from '../../objects/objects';
-import EnrolledSubjects from './Enrolled';
-import AvailableSubjects from './Available';
+import { width } from '@mui/system';
+
 
 
 
@@ -83,21 +84,26 @@ const columns: GridColDef[] = [
 
 
 export default function SubjecList() {
+    const defaultButtons = [
+        <Button sx={{mx: 1, width: 100} } variant="contained">Add</Button>,
+        <NewSubjectForm/>
+     ]
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([])
-    const [table, setTable] = useState(<AvailableSubjects/>)
+    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([])
+    const [buttons, setButtons] = useState(defaultButtons)
 
     const handleTabs = (e: SyntheticEvent, newValue: string) => {
 
         switch (newValue) {
             case "available":
-                setTable(<AvailableSubjects/>)
+                setButtons(defaultButtons)
                 break;
             case "enrolled":
-                setTable(<EnrolledSubjects/>)
+                setButtons([<Button variant="contained">Remove</Button>])
                 break;
+            
         }
     }
 
@@ -125,11 +131,29 @@ export default function SubjecList() {
                         placeholder='Stub Code'
                         />  
                     </div>
-                    <Tabs onChange={handleTabs} >
+                    <Tabs onChange={handleTabs}  >
                         <Tab sx={{border: 2,  borderStyle:"outset none none outset" }} value="available" label="Available"  wrapped />
                         <Tab sx={{border: 2,  borderStyle:"outset inset none none"}} value="enrolled" label="Enrolled" wrapped />
                     </Tabs>
-                    {table}
+                    <div style={{ height: 400, width: '100%' }}>
+                        
+                    <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    pageSize={10}
+                    rowsPerPageOptions={[5]}
+                    checkboxSelection={true}
+                    disableSelectionOnClick
+                    onSelectionModelChange={(newSelectionModel) => {
+                            console.log(newSelectionModel)
+                            setSelectionModel(newSelectionModel);
+                        }}
+                    selectionModel={selectionModel}
+                    />
+                </div>
+                <Stack sx={{gap:2, my:2}} direction="row-reverse">
+                    {buttons}
+                </Stack>
                 </Box>
             </Modal>
         </div>
