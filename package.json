@@ -2,6 +2,9 @@
   "name": "prelim-student-scheduler",
   "version": "1.0.0",
   "description": "",
+  "prisma": {
+    "schema": "./src/services/prisma/schema.prisma"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/dist/server.js",
