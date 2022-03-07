@@ -5,7 +5,8 @@ import { Student,  SubjectCard } from '../../objects/objects';
 import View from "./View";
 import Compare from "./Compare";
 import Calendar from "../Calendar/Calendar";
-import UserInputButton from '../InputButtons/UserInputButton';
+import AddStudentForm from '../Forms/AddStudentForm';
+
 
 
 
@@ -47,6 +48,9 @@ export default function StudentSchedule() {
         setSchedule([])
 
         switch (value) {
+            case "add":
+                setScheduleView(<AddStudentForm/>);
+                break;
             case "view":
                 setScheduleView(<View options={studentOptions} setSchedule={setSchedule}/>);
                 break;
@@ -70,12 +74,14 @@ export default function StudentSchedule() {
                         </InputLabel>
                         <Select autoWidth label="Options" onChange={handleOptionChange}  >
                             <MenuItem></MenuItem>
+                            <MenuItem value="add">Add Student</MenuItem>
                             <MenuItem value="view">View Schedule</MenuItem>
                             <MenuItem value="compare">Compare Schedule</MenuItem>
                         </Select>
                     </FormControl>
                     {scheduleView}
-                    <UserInputButton/>
+
+                    
                 {/* <SubjectInputButton studentId={studentA} /> */}
 
                 </Toolbar>

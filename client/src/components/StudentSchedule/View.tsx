@@ -3,7 +3,8 @@ import {  FormControl, Select, SelectChangeEvent, InputLabel, MenuItem  } from "
 import axios from "axios";
 import {  Subject, SubjectCard } from "../../objects/objects";
 import { mapToCards } from "../../helper/helpers";
-import SubjectInputButton from "../InputButtons/SubjectInputButton";
+import SubjectList from "../SubjectList/SubjectList";
+
 
 
 export default function View(props: {options: JSX.Element[], setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}){
@@ -48,7 +49,7 @@ export default function View(props: {options: JSX.Element[], setSchedule: Dispat
                 </Select>
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
-                <SubjectInputButton studentId={studentId} setSchedule={props.setSchedule} />
+                <SubjectList/>
             </FormControl>
             
         </>
