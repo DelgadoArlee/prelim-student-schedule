@@ -103,7 +103,7 @@ export default function SubjecList() {
 
     return (
         <div style={{ margin: 4 }}>
-            <Button variant="contained" onClick={handleOpen}>Input Subject</Button>
+            <Button variant="contained" onClick={handleOpen}>Add Subject</Button>
             <Modal
                 open={open}
                 onClose={handleClose}
