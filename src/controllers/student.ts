@@ -3,10 +3,11 @@ import { Student } from "@prisma/client";
 
 
 //inserts a student
-const createStudent = ({ lastName, firstName, course, year,  }: Student ) => {
+const createStudent = ({id, lastName, firstName, course, year,  }: Student ) => {
 
     return prisma.student.create({
         data:{
+            id,
             lastName,
             firstName,
             course,

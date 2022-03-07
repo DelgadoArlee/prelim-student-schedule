@@ -13,12 +13,12 @@ router.get('/students', (req: Request, res: Response, next: NextFunction) => [
 ])
 
 //sends a specific student subjects from db
-router.get('/studentSubjects', (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.query;
-    getStudentSubjects(Number(id))
-    .then(subjects => res.send(subjects))
-    .catch(err => err.status(400).send(err));
-})
+// router.get('/studentSubjects', (req: Request, res: Response, next: NextFunction) => {
+//     const { id } = req.query;
+//     getStudentSubjects(Number(id))
+//     .then(subjects => res.send(subjects))
+//     .catch(err => err.status(400).send(err));
+// })
 
 
 export default router;
