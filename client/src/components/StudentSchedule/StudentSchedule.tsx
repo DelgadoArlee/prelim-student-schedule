@@ -31,7 +31,7 @@ export default function StudentSchedule() {
             console.log(err.config);
         })    
       ;
-    }, [])
+    }, [scheduleView])
 
     // Options for Dropdown menus //
     const studentOptions = students.map((student) => {
@@ -82,7 +82,6 @@ export default function StudentSchedule() {
                     {scheduleView}
 
                     
-                {/* <SubjectInputButton studentId={studentA} /> */}
 
                 </Toolbar>
             </AppBar>
