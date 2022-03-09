@@ -20,23 +20,22 @@ model Student {
 }
 
 model Subject {
-  id          Int       @id
-  student     Student   @relation(fields: [studentId], references: [id])
-  studentId   Int
-  title       String
+  id        Int       @id
+  title     String
   description String?
-  enrolled    Int       @default(0)
-  maxEnrolled Int       @default(50)
-  Lecture     Lecture[]
-  Lab         Lab[]
+  enrolled Int @default(0)
+  maxEnrolled Int @default(50)
+  students  Student[]
+  Lecture   Lecture?
+  Lab       Lab?
 }
 
 model Lecture {
   id        Int     @id @default(autoincrement())
   subject   Subject @relation(fields: [subjectId], references: [id])
   subjectId Int
-  startTime Int
-  endTime   Int
+  startTime String
+  endTime   String
   days      Int[]
 }
 
@@ -44,7 +43,7 @@ model Lab {
   id        Int     @id @default(autoincrement())
   subject   Subject @relation(fields: [subjectId], references: [id])
   subjectId Int
-  startTime Int
-  endTime   Int
+  startTime String
+  endTime   String
   days      Int[]
 }
