@@ -1,15 +1,30 @@
 import React, {useState, useEffect, Dispatch, SetStateAction} from "react";
-import {  FormControl, Select, SelectChangeEvent, InputLabel, Button } from "@mui/material";
+import {  
+    FormControl,  
+    InputLabel, 
+    Select, 
+    SelectChangeEvent,
+    MenuItem, 
+    Button } from "@mui/material";
 import axios from "axios";
 import { mapToCards } from "../../helper/helpers"
-import {  Subject, SubjectCard } from "../../objects/objects";
+import { Student, Subject, SubjectCard } from "../../objects/objects";
 
 
-export default function Compare(props: {options: JSX.Element[], setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}){
+export default function Compare(props: {students: Student[], setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}){
+    const studentOptions = props.students.map((student) => {
+        let name = `${student.firstName}  ${student.lastName}`
+        
+        return (
+            <MenuItem value={student.id}>{name}</MenuItem>
+        )
+    })
     const [studentA, setStudentA] = useState<number>();
     const [studentB, setStudentB] = useState<number>();
     const [subjectsA, setSubjectsA] = useState<Subject[]>([]);
     const [subjectsB, setSubjectsB] = useState<Subject[]>([]);
+    const [studentOptionsA, setOptionsA ] = useState(studentOptions);
+    const [studentOptionsB, setOptionsB ] = useState(studentOptions);
 
 
     // handles the select of 1st dropdown //
@@ -17,6 +32,9 @@ export default function Compare(props: {options: JSX.Element[], setSchedule: Dis
         const id: number = Number(e.target.value)
 
         setStudentA(id)
+        setOptionsB(
+            studentOptions.filter(student => student.props.value != e.target.value)
+        )
     }
 
     // handles the select of 2nd dropdown //
@@ -25,6 +43,9 @@ export default function Compare(props: {options: JSX.Element[], setSchedule: Dis
   
 
         setStudentB(id)
+        setOptionsA(
+            studentOptions.filter(student => student.props.value != e.target.value)
+        )
     }
 
     //gets subjects of Student A //
@@ -80,7 +101,7 @@ export default function Compare(props: {options: JSX.Element[], setSchedule: Dis
                             <em>StudentA</em>
                         </InputLabel>
                         <Select autoWidth label="StudentA" onChange={handleStudentAChange} required>
-                            {props.options}
+                            {studentOptionsA}
                         </Select>
                     </FormControl>
                     <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -88,7 +109,7 @@ export default function Compare(props: {options: JSX.Element[], setSchedule: Dis
                             <em>StudentB</em>
                         </InputLabel>
                         <Select autoWidth label="StudentB" onChange={handleStudentBChange} required >
-                            {props.options}
+                            {studentOptionsB}
                         </Select>
                         
                     </FormControl>

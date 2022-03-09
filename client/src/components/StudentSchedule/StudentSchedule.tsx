@@ -29,18 +29,9 @@ export default function StudentSchedule() {
                 console.log(err.message);
             }
             console.log(err.config);
-        })    
-      ;
-    }, [scheduleView])
+        });
+    }, [scheduleView]);
 
-    // Options for Dropdown menus //
-    const studentOptions = students.map((student) => {
-            let name = `${student.firstName}  ${student.lastName}`
-        
-                return (
-                    <MenuItem value={student.id}>{name}</MenuItem>
-                )
-        })
    
     //Changes the Calender View // 
     const handleOptionChange = (e: SelectChangeEvent) => {
@@ -52,18 +43,15 @@ export default function StudentSchedule() {
                 setScheduleView(<AddStudentForm/>);
                 break;
             case "view":
-                setScheduleView(<View options={studentOptions} setSchedule={setSchedule}/>);
+                setScheduleView(<View students={students} setSchedule={setSchedule}/>);
                 break;
             case "compare":
-                setScheduleView(<Compare options={studentOptions} setSchedule={setSchedule}/>);
+                setScheduleView(<Compare students={students} setSchedule={setSchedule}/>);
                 break;
         }
 
     }
    
-
-    
- 
     return (
         <>
             <AppBar position="static" color='transparent'>

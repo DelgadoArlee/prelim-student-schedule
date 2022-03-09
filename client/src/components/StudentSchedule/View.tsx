@@ -1,14 +1,23 @@
 import React, {useState, useEffect, Dispatch, SetStateAction} from "react";
 import {  FormControl, Select, SelectChangeEvent, InputLabel, MenuItem  } from "@mui/material";
 import axios from "axios";
-import {  Subject, SubjectCard } from "../../objects/objects";
+import { Student, Subject, SubjectCard } from "../../objects/objects";
 import { mapToCards } from "../../helper/helpers";
 import SubjectList from "../SubjectList/SubjectList";
 
 
 
-export default function View(props: {options: JSX.Element[], setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}){
+export default function View(props: {students: Student[], setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}){
     const [studentId, setStudentId] = useState<number>();
+
+
+    const studentOptions = props.students.map((student) => {
+        let name = `${student.firstName}  ${student.lastName}`
+        
+        return (
+            <MenuItem value={student.id}>{name}</MenuItem>
+        )
+    });
     
     // Sets the Id to the Student selected in the dropdown //
     const handleStudentChange = (e: SelectChangeEvent) => {
@@ -16,7 +25,7 @@ export default function View(props: {options: JSX.Element[], setSchedule: Dispat
         const id: number = Number(e.target.value)
 
         setStudentId(id)
-    }
+    };
 
 
     // fetches the subject of the selected student // 
@@ -45,7 +54,7 @@ export default function View(props: {options: JSX.Element[], setSchedule: Dispat
                 </InputLabel>
                 <Select autoWidth label="Student" onChange={handleStudentChange}>
                     <MenuItem></MenuItem>
-                    {props.options}
+                    {studentOptions}
                 </Select>
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
