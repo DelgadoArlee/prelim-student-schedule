@@ -83,33 +83,46 @@ const columns: GridColDef[] = [
 
 
 
-export default function SubjecList() {
-    const defaultButtons = [
-        <Button sx={{mx: 1, width: 100} } variant="contained">Add</Button>,
-        <NewSubjectForm/>
-     ]
+export default function SubjecList(props: {student?: number, disabled?: boolean}) {
+    // console.log(props.student)
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([])
-    const [buttons, setButtons] = useState(defaultButtons)
+    const [table, setTable] = useState("available")
+    
+    const buttons = () => {
+        const defaultButtons = [
+            <Button sx={{mx: 1, width: 100} } variant="contained">Add</Button>,
+            <NewSubjectForm student={props.student}/>
+        ]
+
+        switch (table) {
+            case "available":
+               return  defaultButtons
+            case "enrolled":
+                return <Button variant="contained">Remove</Button>
+        }
+    }
 
     const handleTabs = (e: SyntheticEvent, newValue: string) => {
 
         switch (newValue) {
-            case "available":
-                setButtons(defaultButtons)
+            case "available" :
+                setTable("available")
                 break;
-            case "enrolled":
-                setButtons([<Button variant="contained">Remove</Button>])
+            case "enrolled" :
+                setTable("available")
                 break;
-            
+
         }
     }
 
     return (
         <div style={{ margin: 4 }}>
-            <Button variant="contained" onClick={handleOpen}>Add Subject</Button>
+            <Button variant="contained" onClick={handleOpen} disabled={props.disabled}>
+                Add Subject
+            </Button>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -131,17 +144,16 @@ export default function SubjecList() {
                         placeholder='Stub Code'
                         />  
                     </div>
-                    <Tabs onChange={handleTabs}  >
+                    <Tabs onChange={handleTabs} value={false}  >
                         <Tab sx={{border: 2,  borderStyle:"outset none none outset" }} value="available" label="Available"  wrapped />
                         <Tab sx={{border: 2,  borderStyle:"outset inset none none"}} value="enrolled" label="Enrolled" wrapped />
                     </Tabs>
                     <div style={{ height: 400, width: '100%' }}>
-                        
                     <DataGrid
                     rows={rows}
                     columns={columns}
                     pageSize={10}
-                    rowsPerPageOptions={[5]}
+                    rowsPerPageOptions={[10]}
                     checkboxSelection={true}
                     disableSelectionOnClick
                     onSelectionModelChange={(newSelectionModel) => {
@@ -152,7 +164,7 @@ export default function SubjecList() {
                     />
                 </div>
                 <Stack sx={{gap:2, my:2}} direction="row-reverse">
-                    {buttons}
+                    {buttons()}
                 </Stack>
                 </Box>
             </Modal>

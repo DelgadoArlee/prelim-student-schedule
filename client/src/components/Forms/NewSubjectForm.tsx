@@ -1,4 +1,5 @@
-import React, {   
+import React, { 
+    useState,  
     useReducer, 
     ChangeEvent, 
     FormEvent, 
@@ -16,13 +17,18 @@ import {
     FormLabel,
     FormGroup,
     FormControlLabel,
+    InputLabel,
     Radio,
     RadioGroup,
     Checkbox,
+    Select,
+    MenuItem,
+    SelectChangeEvent
 
 } from "@mui/material"
 import axios from 'axios';
-import { Student, Subject, SubjectCard } from '../../objects/objects';
+import { Student, SubjectForm, SubjectCard } from '../../objects/objects';
+import { isNumberObject } from 'util/types';
 
 
 
@@ -41,7 +47,17 @@ const style = {
 };
 
 type FormAction = {
+    key: "Id"
+    value: number
+} | {
+    key: "StudentId"
+    value: number | undefined
+} | {
+    
     key: 'Title'
+    value: string
+} | {
+    key: "Type"
     value: string
 } | {
     key: 'StartTime'
@@ -52,43 +68,52 @@ type FormAction = {
 } |  {
     key: 'Days'
     value: number[]
-} | {
-    key: "Lecture"
-    value: boolean
-} | {
-    key: "Lab"
-    value: boolean
 };
 
 
-
-
-export default function NewSubjectForm(props: { studentId?: number, setSchedule?: Dispatch<SetStateAction<SubjectCard[]>>}) {
-    const subjectFormReducer = (state: Subject, action: FormAction ) => {
-
+export default function NewSubjectForm(
+    props: { 
+        student?: number, 
+        setSchedule?: Dispatch<SetStateAction<SubjectCard[]>>
+    }) {
+    console.log(props.student)
+    //Form Reducer
+    const subjectFormReducer = (state: SubjectForm, action: FormAction ) => {
+        console.log(state)
         switch(action.key){
+            case "Id":
+                return{
+                    ...state,
+                    id: action.value
+                }
+                case "StudentId":
+                return {
+                    ...state,
+                    studentId: action.value
+                }
             case 'Title':
                 return {
                     ...state,
-                    studentId: props.studentId,
-                    title: action.value
+                    title: action.value.toUpperCase()
+                }
+            case "Type":
+                return {
+                    ...state,
+                    type: action.value == "lec"? "LEC" : "LAB"
                 }
             case 'StartTime':
                 return {
                     ...state,
-                    studentId: props.studentId,
                     startTime: action.value
                 }
             case 'EndTime':
                 return {
                     ...state,
-                    studentId: props.studentId,
                     endTime: action.value
                 }
             case 'Days':
                 return {
                     ...state,
-                    studentId: props.studentId,
                     days: action.value
                 }
             default:
@@ -97,35 +122,77 @@ export default function NewSubjectForm(props: { studentId?: number, setSchedule?
         };
     }
     
-    
-    
-    
     const [ formState, dispatch ] = useReducer(subjectFormReducer, {
-        studentId: props.studentId,
+        id: 0,
+        studentId: 0,
         title: '',
+        type: '',
         startTime: '',
         endTime: '',
         days: [],
-        allDay: false
     })
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
+
+    //Modal Window
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => {
+        console.log(props.student)
+        setOpen(true)
+        dispatch({key: "StudentId", value: props.student})
+    };
     const handleClose = () => setOpen(false);
+    
 
+    //TIme Select Options
+    const time = () => {
+        const options: JSX.Element[] = [];
 
+        for (let i = 1; i < 24; i++){
+            for (let j = 0; j < 2; j++){
+                const minutes = (j == 1)? 30 : "00";
+                options.push( <MenuItem value={`${i}:${minutes}`}>{i}:{minutes}</MenuItem>)
+            }
+            
+        }
+
+        return options
+    }
+
+    const [startTimeOptions, setStartOptions] = useState(time())
+    const [endTimeOptions, setEndOptions] = useState(time())
+
+    //Time Select
+    const handleTimeSelect = (value: string, key: string) => {
+        
+
+        switch (key) {
+            case "start":
+                dispatch({key:'StartTime', value: value})
+                setEndOptions(startTimeOptions.filter(option => option.props.value !== value))
+                break;
+            case "end":
+                dispatch({key:'EndTime', value: value})
+                setStartOptions(startTimeOptions.filter(option => option.props.value !== value))
+                break;
+            default:
+                break;
+        }
+    }
+
+    //Checkbox Event Handler
     const handleDayCheck = (e: ChangeEvent<HTMLInputElement>) => {
-        dispatch({
-            key: "Days", 
-            value: (e.target.checked)
-            ? [...formState.days, Number(e.target.value)] 
-            : [...formState.days].filter(i => i != Number(e.target.value))
-        })
+        const value = Number(e.target.value)
+        if(formState.days.includes(value)){
+            dispatch({
+                key: "Days", 
+                value: [...formState.days, value] 
+            })
+        }
+        
         
     
     }
 
-
-
+    //Form Submit Event Handler
     const handleSubmit = ( e: FormEvent ) => {
         e.preventDefault();
 
@@ -146,9 +213,13 @@ export default function NewSubjectForm(props: { studentId?: number, setSchedule?
                 console.log(err.message);
             }
             console.log(err.config);
-        })    
+        }) 
+        
+        handleClose()
       
     }
+
+   
 
     return (
         <div>
@@ -161,27 +232,32 @@ export default function NewSubjectForm(props: { studentId?: number, setSchedule?
             >
                 <Box
                     component="form"
+                    onSubmit={handleSubmit}
                     sx={style}
                     noValidate
                     autoComplete="off"
                 >
-                    <div>
+                    <Stack>
                         Input the Subject's Details Here:
                         <Divider sx={{my: 2}}/>
                         <FormControl required>
                             <FormLabel color="info">Type</FormLabel>
-                            <RadioGroup row>
-                                <FormControlLabel value="Lecture"control={<Radio size="small"  />} label="Lecture" />
-                                <FormControlLabel value="Lab" control={<Radio size="small" />} label="Lab" />
+                            <RadioGroup 
+                            row 
+                            onChange={e => dispatch({key: "Type", value: e.target.value})}
+                            >
+                                <FormControlLabel value="lec"control={<Radio size="small"  />} label="Lecture" />
+                                <FormControlLabel value="lab" control={<Radio size="small" />} label="Lab" />
                             </RadioGroup>
                         </FormControl>
                         <TextField sx={{ mt: 1 }}
-                            onChange={e => dispatch({key:'Title', value: e.target.value})}
+                            onChange={
+                                e => dispatch({key:"Id", value: Number(e.target.value)})
+                            }
                             id="subject-stub-input-field"
                             variant="standard"
                             label="Stub Code"
                             size="small"
-                            placeholder="Emath2200"
                             fullWidth
                             multiline
                             required
@@ -197,34 +273,40 @@ export default function NewSubjectForm(props: { studentId?: number, setSchedule?
                             multiline
                             required
                         />
+                        <Stack sx={{ mt:1, gap:3, minWidth: 150}} direction="row">
+                        <FormControl sx={{mt:2, width: 150, textAlign: "center"}}>
+                            <InputLabel id="start-time-select-label">Start Time</InputLabel>
+                                <Select
+                                    labelId="start-time-select-label"
+                                    id="start-time-select"
+                                    label="Year"
+                                    variant="standard"
+                                    value={formState.startTime}
+                                    onChange={e => handleTimeSelect(e.target.value, "start")}
+                                    fullWidth
+                                    required
+                                >
+                                    {startTimeOptions}
+                                </Select>
+                        </FormControl>
+                        <FormControl sx={{mt:2, width: 150, textAlign: "center"}}>
+                            <InputLabel id="end-time-select-label">End Time</InputLabel>
+                                <Select
+                                    labelId="end-time-select-label"
+                                    id="end-time-select"
+                                    label="Year"
+                                    variant="standard"
+                                    value={formState.endTime}
+                                    onChange={e => handleTimeSelect(e.target.value, "end")}
+                                    fullWidth
+                                    required
+                                >
+                                    {endTimeOptions}
+                                </Select>
 
-                        <TextField  sx={{ mt: 2 }}
-                            onChange={e => dispatch({key:'StartTime', value: e.target.value})}
-                            id="subject-timeslot-start-input-field"
-                            variant="standard"
-                            label="Timeslot Start Time"
-                            placeholder="10:00:00"
-                            size="small"
-                            fullWidth
-                            multiline
-                            required
-                        />
 
-                        <TextField  sx={{ mt: 2 }}
-                            onChange={e => dispatch({key:'EndTime', value: e.target.value})}
-                            id="subject-timeslot-end-input-field"
-                            variant="standard"
-                            label="Timeslot End Time"
-                            placeholder="12:00:00"
-                            size="small"
-                            fullWidth
-                            multiline
-                            required
-                        // helperText="Incorrect entry."
-                        //^included error and helperText here idk how it'll be implemented yet
-                        />
-
-                        {/* Days Check Box */}
+                        </FormControl>
+                        </Stack>
                         <Divider sx={{mt: 3}}/>
                         <Stack direction="row" >
                             <FormControl sx={{mt:1}} >
@@ -245,10 +327,10 @@ export default function NewSubjectForm(props: { studentId?: number, setSchedule?
                             </FormControl>
                         </Stack>
                         <Stack>
-                            <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" onClick={() => console.log(formState)} >Submit</Button>
+                            <Button style={{ marginLeft: 20, marginTop: 25 }} variant="contained" type="submit" >Submit</Button>
                         </Stack>
                         {/*^button just for testing */}
-                    </div>
+                    </Stack>
                 </Box>
             </Modal>
         </div>

@@ -1,4 +1,10 @@
-import React, { useState, useReducer, FormEvent, Dispatch, SetStateAction } from 'react';
+import React, {
+     useState, 
+     useReducer, 
+     FormEvent, 
+     Dispatch, 
+     SetStateAction 
+} from 'react';
 import axios from "axios";
 import {
     Box,
@@ -8,9 +14,9 @@ import {
     TextField,
     InputLabel,
     MenuItem,
-    FormControl
+    FormControl,
+    Select,
 } from "@mui/material";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Student } from "../../objects/objects";
 
 

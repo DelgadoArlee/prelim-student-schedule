@@ -15,6 +15,17 @@ interface Subject{
     allDay: boolean
 }
 
+interface SubjectForm {
+    id: number
+    studentId?: number
+    type: string
+    title: string
+    startTime: string
+    endTime: string
+    days: number[]
+
+}
+
 interface SubjectCard {
     title: string
     startTime: string
@@ -26,4 +37,4 @@ interface SubjectCard {
 }
 
 
-export type { Student, Subject, SubjectCard };
+export type { Student, Subject, SubjectForm, SubjectCard };

@@ -9,6 +9,7 @@ import SubjectList from "../SubjectList/SubjectList";
 
 export default function View(props: {students: Student[], setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}){
     const [studentId, setStudentId] = useState<number>();
+    const [disableButton, activateButton] = useState(true)
 
 
     const studentOptions = props.students.map((student) => {
@@ -21,7 +22,7 @@ export default function View(props: {students: Student[], setSchedule: Dispatch<
     
     // Sets the Id to the Student selected in the dropdown //
     const handleStudentChange = (e: SelectChangeEvent) => {
-        console.log(e.target.value)
+        activateButton(false);
         const id: number = Number(e.target.value)
 
         setStudentId(id)
@@ -58,7 +59,7 @@ export default function View(props: {students: Student[], setSchedule: Dispatch<
                 </Select>
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
-                <SubjectList/>
+                <SubjectList student={studentId} disabled={disableButton}/>
             </FormControl>
             
         </>

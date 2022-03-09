@@ -1,6 +1,7 @@
 import express, { Router, Request, Response, NextFunction } from "express";
 import  { createStudent }  from "../controllers/student";
-// import { createSubject } from "../controllers/subject";
+import { createLecture, createLab } from "../controllers/subject";
+import { SubjectForm } from "../types/types";
 
 const router: Router = express.Router();
 
@@ -14,13 +15,28 @@ router.post('/student', async (req: Request, res: Response, next: NextFunction) 
 
 
 
-// router.post('/subject', async (req: Request, res: Response, next: NextFunction) => {
-//     const  subject =  req.body;
+router.post('/subject', async (req: Request, res: Response, next: NextFunction) => {
+    const  {id, studentId, type, title, startTime, endTime, days} =  req.body;
 
-//     return createSubject( subject )
-//             .then(data => res.send("Student Added"))
-//             .catch((err:any) => res.status(400).send(err));
-// });
+
+    switch(type){
+        case "LEC":
+            return createLecture({id, studentId, title, startTime, endTime, days})
+                    .then( data => res.send("Subject Added" ))
+                    .catch( err => {
+                        res.status(400).send(err)
+                        console.log(err)
+                    } );
+
+        case "LAB":
+            return createLab({id, studentId, title, startTime, endTime, days})
+                    .then( data => res.send("Subject Added" ))
+                    .catch( err => {
+                        res.status(400).send(err)
+                        console.log(err)
+                    } );
+    }
+});
 
 
 

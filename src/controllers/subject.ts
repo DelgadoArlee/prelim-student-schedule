@@ -1,35 +1,83 @@
 import prisma from "../services/database";
-import { Student, Subject } from "@prisma/client";
+import { SubjectForm } from "../types/types";
 
-//creates subject
-const createSubject = ({ studentId, title, startTime, endTime, days, allDay}: Subject ) => {
-    
-    return prisma.subject.create({
-        data:{
-            student:{
+
+
+// //creates subject
+const createLecture = ( {id, studentId, title, startTime, endTime, days}: SubjectForm ) => {
+    return prisma.subject.upsert({
+        where: { id },
+        create: {
+            id,
+            title,
+            students:{
                 connect:{
                     id: studentId
                 }
             },
+            Lecture: {
+                create:{
+                    startTime,
+                    endTime,
+                    days
+                }
+            }
+        },
+        update:{
+            Lecture: {
+                create:{
+                    startTime,
+                    endTime,
+                    days
+                }
+            }
+        }  
+    })
+}
+
+const createLab = ( {id, studentId, title, startTime, endTime, days}: SubjectForm ) => {
+    return prisma.subject.upsert({
+        where: { id: id },
+        create: {
+            id,
             title,
-            startTime,
-            endTime,
-            days,
-            allDay 
-        }
+            students:{
+                connect:{
+                    id: studentId
+                }
+            },
+            Lab: {
+                create:{
+                    startTime,
+                    endTime,
+                    days
+                }
+            }
+        },
+        update:{
+            Lab: {
+                create:{
+                    startTime,
+                    endTime,
+                    days
+                }
+            }
+        }  
     })
-    
-    
 }
 
-//gets subject
-const getStudentSubjects = async ( id: number) => {
-    return await prisma.subject.findMany({
-        where:{
-            studentId: id
-        }
-    })
-    
-}
 
-export { createSubject, getStudentSubjects };
+
+
+
+// //gets subject
+// const getStudentSubjects = async ( id: number) => {
+//     return await prisma.subject.findMany({
+//         where:{
+//             studentId: id
+//         }
+//     })
+    
+// }
+
+export { createLecture, createLab };
