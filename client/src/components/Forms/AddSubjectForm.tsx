@@ -3,8 +3,6 @@ import React, {
     useReducer, 
     ChangeEvent, 
     FormEvent, 
-    Dispatch, 
-    SetStateAction 
 } from 'react';
 import { 
     Box,
@@ -27,8 +25,8 @@ import {
 
 } from "@mui/material"
 import axios from 'axios';
-import { Student, SubjectForm, SubjectCard } from '../../objects/objects';
-import { isNumberObject } from 'util/types';
+import { Student, Subject, SubjectCard } from '../../objects/objects';
+
 
 
 
@@ -50,10 +48,6 @@ type FormAction = {
     key: "Id"
     value: number
 } | {
-    key: "StudentId"
-    value: number | undefined
-} | {
-    
     key: 'Title'
     value: string
 } | {
@@ -68,28 +62,21 @@ type FormAction = {
 } |  {
     key: 'Days'
     value: number[]
-};
+} | {
+    key: "Reset"
+    value?: Subject 
+}
 
 
-export default function NewSubjectForm(
-    props: { 
-        student?: number, 
-        setSchedule?: Dispatch<SetStateAction<SubjectCard[]>>
-    }) {
-    console.log(props.student)
+export default function AddSubjectForm() {
     //Form Reducer
-    const subjectFormReducer = (state: SubjectForm, action: FormAction ) => {
+    const subjectFormReducer = (state: Subject, action: FormAction ) => {
         console.log(state)
         switch(action.key){
             case "Id":
                 return{
                     ...state,
                     id: action.value
-                }
-                case "StudentId":
-                return {
-                    ...state,
-                    studentId: action.value
                 }
             case 'Title':
                 return {
@@ -114,7 +101,16 @@ export default function NewSubjectForm(
             case 'Days':
                 return {
                     ...state,
-                    days: action.value
+                    days: Array.from( new Set(action.value))
+                }
+            case "Reset":
+                return {
+                    id: 0,
+                    title: '',
+                    type: '',
+                    startTime: '',
+                    endTime: '',
+                    days: [],
                 }
             default:
                 return state
@@ -124,7 +120,6 @@ export default function NewSubjectForm(
     
     const [ formState, dispatch ] = useReducer(subjectFormReducer, {
         id: 0,
-        studentId: 0,
         title: '',
         type: '',
         startTime: '',
@@ -134,11 +129,7 @@ export default function NewSubjectForm(
 
     //Modal Window
     const [open, setOpen] = useState(false);
-    const handleOpen = () => {
-        console.log(props.student)
-        setOpen(true)
-        dispatch({key: "StudentId", value: props.student})
-    };
+    const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false);
     
 
@@ -157,6 +148,7 @@ export default function NewSubjectForm(
         return options
     }
 
+    const [timeOptions, setOptions] = useState(time())
     const [startTimeOptions, setStartOptions] = useState(time())
     const [endTimeOptions, setEndOptions] = useState(time())
 
@@ -167,11 +159,11 @@ export default function NewSubjectForm(
         switch (key) {
             case "start":
                 dispatch({key:'StartTime', value: value})
-                setEndOptions(startTimeOptions.filter(option => option.props.value !== value))
+                setEndOptions(timeOptions.filter(option => option.props.value !== value))
                 break;
             case "end":
                 dispatch({key:'EndTime', value: value})
-                setStartOptions(startTimeOptions.filter(option => option.props.value !== value))
+                setStartOptions(timeOptions.filter(option => option.props.value !== value))
                 break;
             default:
                 break;
@@ -181,15 +173,21 @@ export default function NewSubjectForm(
     //Checkbox Event Handler
     const handleDayCheck = (e: ChangeEvent<HTMLInputElement>) => {
         const value = Number(e.target.value)
-        if(formState.days.includes(value)){
-            dispatch({
-                key: "Days", 
-                value: [...formState.days, value] 
-            })
-        }
+            if(e.target.checked){
+                dispatch({
+                    key:"Days",
+                    value: [...formState.days, value]
+                })
+            }else {
+                console.log("run")
+                dispatch({
+                    key:"Days",
+                    value: [...formState.days].filter(e => e != value)
+                })
+            }
+
+            console.log(formState)
         
-        
-    
     }
 
     //Form Submit Event Handler
@@ -215,6 +213,7 @@ export default function NewSubjectForm(
             console.log(err.config);
         }) 
         
+        dispatch({key: "Reset"})
         handleClose()
       
     }
@@ -223,7 +222,7 @@ export default function NewSubjectForm(
 
     return (
         <div>
-            <Button variant="contained" onClick={handleOpen} >New Subject</Button>
+            <Button variant="contained" onClick={handleOpen} >Add Subject</Button>
             <Modal
                 open={open}
                 onClose={handleClose}

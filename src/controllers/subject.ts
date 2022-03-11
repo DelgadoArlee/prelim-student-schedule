@@ -1,20 +1,12 @@
 import prisma from "../services/database";
 import { SubjectForm } from "../types/types";
 
-
-
-// //creates subject
 const createLecture = ( {id, studentId, title, startTime, endTime, days}: SubjectForm ) => {
     return prisma.subject.upsert({
         where: { id },
         create: {
             id,
             title,
-            students:{
-                connect:{
-                    id: studentId
-                }
-            },
             Lecture: {
                 create:{
                     startTime,
@@ -34,6 +26,7 @@ const createLecture = ( {id, studentId, title, startTime, endTime, days}: Subjec
         }  
     })
 }
+
 
 const createLab = ( {id, studentId, title, startTime, endTime, days}: SubjectForm ) => {
     return prisma.subject.upsert({
@@ -41,11 +34,6 @@ const createLab = ( {id, studentId, title, startTime, endTime, days}: SubjectFor
         create: {
             id,
             title,
-            students:{
-                connect:{
-                    id: studentId
-                }
-            },
             Lab: {
                 create:{
                     startTime,
@@ -66,18 +54,69 @@ const createLab = ( {id, studentId, title, startTime, endTime, days}: SubjectFor
     })
 }
 
+//Gets Subjects Available to the student
+const getAvailableSubjects = async ( id: number) => {
+    return prisma.subject.findMany({
+        where:{
+            students:{
+                every:{
+                    NOT:{
+                        id
+                    }
+                }
+            }
+        },
+        select:{
+            id: true,
+            title: true,
+            Lecture:{
+                select:{
+                    startTime: true,
+                    endTime: true,
+                    days: true
+                }
+            },
+            Lab:{
+                select:{
+                    startTime: true,
+                    endTime: true,
+                    days: true
+                }
+            }
 
+        }
+    })
+}
 
 
 
 // //gets subject
-// const getStudentSubjects = async ( id: number) => {
-//     return await prisma.subject.findMany({
-//         where:{
-//             studentId: id
-//         }
-//     })
-    
-// }
+const getStudentSubjects = async ( id: number) => {
+    return await prisma.subject.findUnique({
+        where:{
+            id
+        },
+        select:{
+            id: true,
+            title: true,
+            Lecture:{
+                select:{
+                    startTime: true,
+                    endTime: true,
+                    days: true
+                }
+            },
+            Lab:{
+                select:{
+                    startTime: true,
+                    endTime: true,
+                    days: true
+                }
+            }
 
-export { createLecture, createLab };
+        }
+    })
+    
+}
+
+export { createLecture, createLab, getAvailableSubjects, getStudentSubjects };

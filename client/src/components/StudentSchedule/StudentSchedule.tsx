@@ -6,6 +6,7 @@ import View from "./View";
 import Compare from "./Compare";
 import Calendar from "../Calendar/Calendar";
 import AddStudentForm from '../Forms/AddStudentForm';
+import AddSubjectForm from '../Forms/AddSubjectForm';
 
 
 
@@ -40,7 +41,13 @@ export default function StudentSchedule() {
 
         switch (value) {
             case "add":
-                setScheduleView(<AddStudentForm/>);
+                setScheduleView(
+                    <>
+                        <AddStudentForm/> 
+                        <AddSubjectForm/>
+                    </>
+                
+                );
                 break;
             case "view":
                 setScheduleView(<View students={students} setSchedule={setSchedule}/>);
@@ -68,9 +75,6 @@ export default function StudentSchedule() {
                         </Select>
                     </FormControl>
                     {scheduleView}
-
-                    
-
                 </Toolbar>
             </AppBar>
 

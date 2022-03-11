@@ -1,4 +1,4 @@
-import React, { useState, SyntheticEvent} from 'react';
+import React, { useState, useEffect, SyntheticEvent, FormEvent} from 'react';
 import { 
     Box, 
     Button, 
@@ -10,12 +10,9 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef, GridSelectionModel } from '@mui/x-data-grid';
 import axios from 'axios';
-import NewSubjectForm from '../Forms/NewSubjectForm';
-import { Subject, SubjectCard } from '../../objects/objects';
-import { width } from '@mui/system';
-
-
-
+import { Subject,  SubjectRow } from '../../objects/objects';
+import { mapSubjectRow, mapSubjects, conflictingDays } from "../../helper/helpers"
+import { isLabeledStatement } from 'typescript';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -26,95 +23,234 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-    width: '100ch'
+    width: '120ch'
 };
 
 //Column Format
 const columns: GridColDef[] = [
-    { field: 'id', headerName: 'SC', width: 70 },
+    { field: 'id', headerName: 'SC', width: 70, align: "center",},
     {
-      field: 'title',
-      headerName: 'SUBJECT',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'startTime',
-      headerName: 'Start',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'endTime',
-      headerName: 'Ends',
-      type: 'number',
-      width: 100,
-      editable: false,
-    },
-    {
-        field: 'daysOfWeek',
-        headerName: 'Days',
-        width: 100,
+        field: 'title',
+        headerName: 'SUBJECT',
+        width: 150,
+        align: "center",
         editable: false,
-      },
+    },
+    {
+        field: 'lecStart',
+        headerName: 'Lec Start',
+        width: 90,
+        align: "center",
+        editable: false,
+    },
+    {
+        field: 'lecEnd',
+        headerName: 'Lec End',
+        type: 'number',
+        width: 90,
+        align: "center",
+        editable: false,
+    },
+    {
+        field: 'lecDays',
+        headerName: 'Lec Days',
+        width: 150,
+        align: "center",
+        editable: false,
+    },
+    {
+        field: 'labStart',
+        headerName: 'Lab Start',
+        width: 90,
+        align: "center",
+        editable: false,
+    },
+    {
+        field: 'labEnd',
+        headerName: 'Lab End',
+        type: 'number',
+        width: 90,
+        align: "center",
+        editable: false,
+    },
+    {
+        field: 'labDays',
+        headerName: 'Lab Days',
+        width: 150,
+        align: "center",
+        editable: false,
+    },
 
   ];
   
   //Rows
-  const rows = [
-    {
-        id: 2313,
-        title: "SE2226 - Lec",
-        startTime: '14:00:00', 
-        endTime:"16:00:00", 
-        daysOfWeek: ["M", "T","W", "Th", "F", "S", "Sun"]
-    },
-    {   
-        id: 2214,
-        title: "SE2226 - Lec",
-        startTime: '13:00:00', 
-        endTime:"16:00:00", 
-        daysOfWeek: ["Sat"],
 
-    }
+  const removeConflicts = (arrA: SubjectRow[], arrB: SubjectRow[]) => {
+     let result: SubjectRow[] = arrA;
+        arrB.forEach( b => {
+           if(b.labDays && b.labStart && b.labEnd){
+               result = result.filter(a => {
+                   if(a.labDays && a.labStart){
+                     return a.labStart < b.labStart! &&  b.labEnd! >= a.labStart
+                   }
+                })
+                .filter(a => {
+                    if(a.labStart){
+                    return a.labStart != b.labStart!
+                  }
+                })
+            }
 
-  ];
+            result = result.filter(a => {
+                if(a.labDays && a.labStart){
+                  return a.labStart! < b.lecStart &&  b.lecEnd >= a.labStart!
+                }
+             })
+             .filter(a => {
+                 if(a.labStart){
+                 return a.labStart == b.lecStart
+               }
+             })
+             .filter(a => a.lecStart != b.lecStart)
+             .filter(a => a.lecStart! < b.lecStart &&  b.lecEnd >= a.lecStart)
+        })
 
+    return result;
+  }
+  
 
+export default function SubjecList(props: {student?: number,  disabled?: boolean}) {
+    const [table, setTable] = useState("available");
+    const [tableSelection, select] = useState<GridSelectionModel>([]);
+    const [availableSubjects, setAvailable] = useState<SubjectRow[]>([]);
+    const [enrolledSubjects, setEnrolled] = useState<SubjectRow[]>([]);
+    const [ rows, setRows] = useState<SubjectRow[]>([]);
 
-
-export default function SubjecList(props: {student?: number, disabled?: boolean}) {
-    // console.log(props.student)
+    //Modal Window 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([])
-    const [table, setTable] = useState("available")
     
-    const buttons = () => {
-        const defaultButtons = [
-            <Button sx={{mx: 1, width: 100} } variant="contained">Add</Button>,
-            <NewSubjectForm student={props.student}/>
-        ]
 
-        switch (table) {
-            case "available":
-               return  defaultButtons
-            case "enrolled":
-                return <Button variant="contained">Remove</Button>
-        }
-    }
+
+    useEffect(() => {
+
+         axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: props.student}})
+        .then(res => setEnrolled(mapSubjectRow(res.data[0].Subject)))
+        .catch( err => {
+            if (err.response){
+                console.log(err.response);
+            } else if (err.request){
+                console.log(err.request);
+            } else{
+                console.log(err.message);
+            }
+            console.log(err.config);
+        });
+
+        axios.get(`http://localhost:5000/get/availableSubjects`, { params:{ id: props.student}})
+        .then(res => setAvailable(mapSubjectRow(res.data)))
+        .catch( err => {
+            if (err.response){
+                console.log(err.response);
+            } else if (err.request){
+                console.log(err.request);
+            } else{
+                console.log(err.message);
+            }
+            console.log(err.config);
+        });
+
+       
+    }, [open])
+
+    
+    
 
     const handleTabs = (e: SyntheticEvent, newValue: string) => {
-
         switch (newValue) {
             case "available" :
                 setTable("available")
+                setRows(removeConflicts([...availableSubjects], [...enrolledSubjects]))
                 break;
             case "enrolled" :
-                setTable("available")
+                setTable("enrolled")
+                setRows([...enrolledSubjects])
                 break;
 
+        }
+
+        console.log(rows)
+    }
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault()
+
+        switch (table) {
+            case "available":
+                axios.post(
+                    'http://localhost:5000/post/addToStudent',
+                    {
+                        studentId: props.student,
+                        subjectIds: tableSelection.map( id => {
+                                return {id: id}
+                            })
+                    }
+                )
+                .then( res => {
+                    console.log(res.data)
+                    return res.data;
+                })
+                .catch( err => {
+                    if (err.response){
+                        console.log(err.response);
+                    } else if (err.request){
+                        console.log(err.request);
+                    } else{
+                        console.log(err.message);
+                    }
+                    console.log(err.config);
+                })
+                break;
+            case "enrolled":
+                axios.post(
+                    'http://localhost:5000/post/remove',
+                    {
+                        studentId: props.student,
+                        subjectIds: tableSelection.map( id => {
+                                return {id: id}
+                            })
+                    }
+                )
+                .then( res => {
+                    console.log(res.data)
+                    return res.data;
+                })
+                .catch( err => {
+                    if (err.response){
+                        console.log(err.response);
+                    } else if (err.request){
+                        console.log(err.request);
+                    } else{
+                        console.log(err.message);
+                    }
+                    console.log(err.config);
+                })
+                break;
+        }
+
+        select([])
+
+      
+    }
+
+    const buttons = () => {
+
+        switch (table) {
+            case "available":
+               return  <Button variant="contained" type="submit">Add</Button>
+            case "enrolled":
+                return <Button variant="contained" type="submit">Remove</Button>
         }
     }
 
@@ -131,18 +267,19 @@ export default function SubjecList(props: {student?: number, disabled?: boolean}
             >
                 <Box
                     component="form"
+                    onSubmit={handleSubmit}
                     sx={style}
                     noValidate
                     autoComplete="off"
                 >
                
                     <div>
-                        <TextField
+                        {/* <TextField
                         sx={{my:2}}
                         fullWidth
                         size="small"
                         placeholder='Stub Code'
-                        />  
+                        />   */}
                     </div>
                     <Tabs onChange={handleTabs} value={false}  >
                         <Tab sx={{border: 2,  borderStyle:"outset none none outset" }} value="available" label="Available"  wrapped />
@@ -156,11 +293,12 @@ export default function SubjecList(props: {student?: number, disabled?: boolean}
                     rowsPerPageOptions={[10]}
                     checkboxSelection={true}
                     disableSelectionOnClick
-                    onSelectionModelChange={(newSelectionModel) => {
-                            console.log(newSelectionModel)
-                            setSelectionModel(newSelectionModel);
+                    onSelectionModelChange={(rowIds) => {
+                            select(rowIds);
+                                
+                            console.log(tableSelection)
                         }}
-                    selectionModel={selectionModel}
+                    selectionModel={tableSelection}
                     />
                 </div>
                 <Stack sx={{gap:2, my:2}} direction="row-reverse">

@@ -1,39 +1,148 @@
-import { Subject, SubjectCard } from "../objects/objects";
+import { Subject, SubjectCard, SubjectRow} from "../objects/objects";
 import  subjectColors  from "../styles/subjectColors";
 
-//converts Subject to Calendar event object
-const mapToCards = ( subjects: Subject[], addSubject?: Subject,color?: string, borderColor?: string ) =>{
-    
-    if(addSubject!){
-        return [...subjects, addSubject].map( (subject, index) => {
-            const card: SubjectCard = {
-                title: subject.title,
-                startTime: subject.startTime,
-                endTime: subject.endTime,
-                daysOfWeek: subject.days,
-                allDay: subject.allDay,
-                color: (color!)? color : subjectColors[index] ,
-                borderColor: borderColor
-            }
-        
-            return card;
-        })
-    }else{
-        return subjects.map( (subject, index) => {
-            const card: SubjectCard = {
-                title: subject.title,
-                startTime: subject.startTime,
-                endTime: subject.endTime,
-                daysOfWeek: subject.days,
-                allDay: subject.allDay,
-                color: (color!)? color : subjectColors[index] ,
-                borderColor: borderColor
-            }
-        
-            return card;
-        })
-    }
-   
-} 
 
-export { mapToCards }
+const toSubject = ( subject: any ) => {
+    const result: Subject[] = []
+    if(subject.Lecture){
+        result.push(
+            {
+                id: subject.id,
+                type: "LEC",
+                title: subject.title,
+                startTime: subject.Lecture.startTime,
+                endTime: subject.Lecture.endTime,
+                days: subject.Lecture.days
+            }
+        )
+    }
+
+    if(subject.Lab){
+        result.push(
+            {
+                id: subject.id,
+                type: "LAB",
+                title: subject.title,
+                startTime: subject.Lab.startTime,
+                endTime: subject.Lab.endTime,
+                days: subject.Lab.days
+            }
+        )
+    }
+
+    return result
+
+}
+
+const mapSubjects = (subject?: any) =>{ 
+    const  result = subject.flatMap(toSubject)
+      if(subject){
+          return  result
+      }
+      return []
+}  
+
+//Convert days number to string
+const convertDay = ( value: number ) => {
+    let result: string = ""
+    switch (value) {
+        case 0 :
+            result = "Sun"
+            break;
+        case 1 :
+            result = "M"
+            break;
+        case 2 :
+            result = "T"
+            break;
+        case 3 :
+            result = "W"
+            break;
+        case 4 :
+            result = "Th"
+            break;
+        case 5 :
+            result = "F"
+            break;
+        case 6 :
+            result = "Sat"
+            break;
+    }
+    return result;
+}
+
+const mapDays = (arr: number[]) => arr.map(convertDay)
+
+
+const conflictingDays = (arrA?: string[], arrB?: string[]) => {
+    if(arrA && arrB){
+        const conflicts = arrA.map( a => {
+            if(arrB.includes(a)){
+                return a
+            }
+        })
+    
+        return conflicts.length > 0;
+    }
+    
+    return false
+}
+
+
+const subjectRow = (subject: any) => {
+
+    console.log(subject)
+  let result: SubjectRow =  { 
+    id: subject.id,
+    title: subject.title,
+    lecStart: subject.Lecture.startTime,
+    lecEnd: subject.Lecture.endTime,
+    lecDays: mapDays(subject.Lecture.days),
+   
+    }
+
+    if(subject.Lab != null || subject.lab != undefined){
+        result = {
+            ...result,
+            labStart:  subject.Lab.startTime,
+            labEnd: subject.Lab.endTime,
+            labDays: mapDays(subject.Lab.days),
+        }
+    }
+
+    return result
+}
+
+const mapSubjectRow = ( subjects?: any) => {
+    if(subjects){
+        return  subjects.map(subjectRow)
+    }
+    return []
+}
+
+// //converts Subject to Calendar event object
+
+const toSubjectCard= (subject: Subject, color?: string, borderColor?: string ) => {
+    const result: SubjectCard = {
+        title: `${subject.title} - ${subject.type}`,
+        startTime: subject.startTime,
+        endTime: subject.endTime,
+        daysOfWeek: subject.days,
+        color:  color,
+        borderColor: borderColor
+    };
+    
+    return result
+
+}
+const mapToCards = ( subjects: Subject[], color?: string, borderColor?: string ) =>{
+        return subjects.map((subject, index) => toSubjectCard(
+            subject, (color!)? color : subjectColors[index], 
+            borderColor
+            ))
+
+    
+}
+    
+
+export { mapSubjectRow, mapSubjects, mapToCards, conflictingDays }

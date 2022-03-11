@@ -6,16 +6,16 @@ interface Student{
     year: number
 }
 
-interface Subject{
-    studentId?: number
-    title: string
-    startTime: string
-    endTime: string
-    days: number[]
-    allDay: boolean
-}
+// interface Subject{
+//     studentId?: number
+//     title: string
+//     startTime: string
+//     endTime: string
+//     days: number[]
+//     allDay: boolean
+// }
 
-interface SubjectForm {
+interface Subject {
     id: number
     studentId?: number
     type: string
@@ -26,15 +26,26 @@ interface SubjectForm {
 
 }
 
+interface SubjectRow {
+    id: number
+    title: string
+    lecStart: string
+    lecEnd: string
+    lecDays: string[]
+    labStart?: string
+    labEnd?: string
+    labDays?: string[]
+
+}
+
 interface SubjectCard {
     title: string
     startTime: string
     endTime: string
     daysOfWeek: number[]
-    allDay: boolean
     color?: string
     borderColor?: string
 }
 
 
-export type { Student, Subject, SubjectForm, SubjectCard };
+export type { Student, Subject, SubjectCard, SubjectRow };

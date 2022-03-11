@@ -1,7 +1,7 @@
 import express, { Router, Request, Response, NextFunction } from "express";
-import  { createStudent }  from "../controllers/student";
-import { createLecture, createLab } from "../controllers/subject";
-import { SubjectForm } from "../types/types";
+import  { createStudent, addSubjects, removeSubjects}  from "../controllers/student";
+import { createLecture, createLab,  } from "../controllers/subject";
+
 
 const router: Router = express.Router();
 
@@ -36,6 +36,28 @@ router.post('/subject', async (req: Request, res: Response, next: NextFunction) 
                         console.log(err)
                     } );
     }
+});
+
+router.post('/addToStudent', async (req: Request, res: Response, next: NextFunction) => {
+    const  {studentId, subjectIds} =  req.body;
+  
+    return addSubjects( studentId, subjectIds )
+        .then( data=> res.send("Subjects Added to Students" ))
+        .catch( err =>{
+            console.log(err)
+            res.status(400).send(err)
+        } );
+});
+
+router.post('/remove', async (req: Request, res: Response, next: NextFunction) => {
+    const  {studentId, subjectIds} =  req.body;
+  
+    return removeSubjects( studentId, subjectIds )
+        .then( data=> res.send("Subjects Added to Students" ))
+        .catch( err =>{
+            console.log(err)
+            res.status(400).send(err)
+        } );
 });
 
 

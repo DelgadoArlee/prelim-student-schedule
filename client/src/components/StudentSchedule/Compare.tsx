@@ -7,7 +7,7 @@ import {
     MenuItem, 
     Button } from "@mui/material";
 import axios from "axios";
-import { mapToCards } from "../../helper/helpers"
+import { mapToCards, mapSubjects } from "../../helper/helpers"
 import { Student, Subject, SubjectCard } from "../../objects/objects";
 
 
@@ -48,13 +48,10 @@ export default function Compare(props: {students: Student[], setSchedule: Dispat
         )
     }
 
-    //gets subjects of Student A //
+    // gets subjects of Student A //
     useEffect(() => {
         axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentA}})
-        .then(res => {
-
-            setSubjectsA(res.data)
-        })
+        .then(res => setSubjectsA(mapSubjects(res.data[0].Subject)))
         .catch( err => {
             if (err.response){
                 console.log(err.response);
@@ -68,13 +65,10 @@ export default function Compare(props: {students: Student[], setSchedule: Dispat
       ;
     }, [studentA])
 
-   // gets subjects of Student B // 
+// gets subjects of Student B // 
     useEffect(() => {
         axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentB}})
-        .then(res => {
-
-            setSubjectsB(res.data)
-        })
+        .then(res => setSubjectsB(mapSubjects(res.data[0].Subject)))
         .catch( err => {
             if (err.response){
                 console.log(err.response);
@@ -88,10 +82,8 @@ export default function Compare(props: {students: Student[], setSchedule: Dispat
       ;
     }, [studentB])
 
-    //Compare Button handler
-    const handleOnClick = () => props.setSchedule([...mapToCards(subjectsA, undefined, "blue", "black"), ...mapToCards(subjectsB, undefined, "red", "black")])
-
-
+    // Compare Button handler
+    const handleOnClick = () => props.setSchedule([...mapToCards(subjectsA, "blue", "black"), ...mapToCards(subjectsB, "red", "black")])
 
     return (
             <>
@@ -114,7 +106,12 @@ export default function Compare(props: {students: Student[], setSchedule: Dispat
                         
                     </FormControl>
                     <FormControl sx={{mt: 2, mx: 1, minWidth: 120 }}>
-                        <Button  variant="contained" onClick={handleOnClick} >Compare</Button>
+                        <Button  
+                        variant="contained" 
+                        onClick={handleOnClick} 
+                        >
+                            Compare
+                        </Button>
                     </FormControl>
                     
                 </form>        

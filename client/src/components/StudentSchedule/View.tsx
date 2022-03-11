@@ -1,15 +1,18 @@
 import React, {useState, useEffect, Dispatch, SetStateAction} from "react";
-import {  FormControl, Select, SelectChangeEvent, InputLabel, MenuItem  } from "@mui/material";
+import {  FormControl, Select, SelectChangeEvent, InputLabel, MenuItem, Button  } from "@mui/material";
 import axios from "axios";
-import { Student, Subject, SubjectCard } from "../../objects/objects";
-import { mapToCards } from "../../helper/helpers";
+import { Student, Subject, SubjectCard, SubjectRow } from "../../objects/objects";
+import { mapSubjects, mapToCards, mapSubjectRow  } from "../../helper/helpers";
 import SubjectList from "../SubjectList/SubjectList";
+import StudentSchedule from "./StudentSchedule";
 
 
 
 export default function View(props: {students: Student[], setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}){
     const [studentId, setStudentId] = useState<number>();
     const [disableButton, activateButton] = useState(true)
+    const [studentSubjects, setSubjects] = useState<Subject[]>([])
+    const [enrolledRows, setRow] = useState<SubjectRow[]>([]);
 
 
     const studentOptions = props.students.map((student) => {
@@ -22,17 +25,18 @@ export default function View(props: {students: Student[], setSchedule: Dispatch<
     
     // Sets the Id to the Student selected in the dropdown //
     const handleStudentChange = (e: SelectChangeEvent) => {
+        setStudentId(Number(e.target.value))
         activateButton(false);
-        const id: number = Number(e.target.value)
 
-        setStudentId(id)
+
+        console.log(studentId)
     };
 
 
     // fetches the subject of the selected student // 
     useEffect(() => {
         axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentId}})
-        .then(res => props.setSchedule(mapToCards(res.data)))
+        .then(res => setSubjects(mapSubjects(res.data[0].Subject)))
         .catch( err => {
             if (err.response){
                 console.log(err.response);
@@ -45,7 +49,9 @@ export default function View(props: {students: Student[], setSchedule: Dispatch<
         });
     }, [studentId])
 
-
+   const handleOnClick = () => {
+        props.setSchedule(mapToCards(studentSubjects))
+    }
 
     return (
         <>
@@ -61,7 +67,13 @@ export default function View(props: {students: Student[], setSchedule: Dispatch<
             <FormControl sx={{ m: 1, minWidth: 120 }}>
                 <SubjectList student={studentId} disabled={disableButton}/>
             </FormControl>
-            
+            <Button  
+            variant="contained" 
+            onClick={handleOnClick}
+            disabled={disableButton}
+            >
+            View
+            </Button>
         </>
     )
 }
