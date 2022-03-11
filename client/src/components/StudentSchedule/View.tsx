@@ -9,7 +9,7 @@ import StudentSchedule from "./StudentSchedule";
 
 
 export default function View(props: {students: Student[], setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}){
-    const [studentId, setStudentId] = useState<number>();
+    const [studentId, setStudentId] = useState<number>(0);
     const [disableButton, activateButton] = useState(true)
     const [studentSubjects, setSubjects] = useState<Subject[]>([])
     const [enrolledRows, setRow] = useState<SubjectRow[]>([]);
