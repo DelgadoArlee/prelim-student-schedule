@@ -85,7 +85,7 @@ const subjectRow = (subject: any) => {
    
     }
 
-    if(subject.Lab != null || subject.lab != undefined){
+    if(subject.Lab !== null || subject.lab !== undefined){
         result = {
             ...result,
             labStart:  subject.Lab.startTime,
@@ -129,13 +129,13 @@ const mapToCards = ( subjects: Subject[], color?: string, borderColor?: string )
 }
 
 const conflictingDays = (arrA?: string[], arrB?: string[]) => {
+    const conflicts: string[] = []
     if(arrA && arrB){
-        const conflicts = arrA.map( a => {
-            if(arrB.includes(a)){
-                return a
-            }
+            arrA.forEach( a => {
+                if(arrB.includes(a)){
+                    conflicts.push(a)
+                }
         })
-    
         return conflicts.length > 0;
     }
     
@@ -143,67 +143,96 @@ const conflictingDays = (arrA?: string[], arrB?: string[]) => {
 }
 
 const checkConflicts = (arrA: SubjectRow, arrB: SubjectRow) => {
+    const results: boolean[] = []
     if(arrA.labDays && arrB.labDays){
-        if(conflictingDays(arrA.labDays, arrB.labDays)){
-            return true;
-        }
+        results.push(conflictingDays(arrA.labDays, arrB.labDays))
     }else if(arrA.labDays){
-        if(conflictingDays(arrA.labDays, arrB.lecDays)){
-            return true
-        }
+
+            results.push(conflictingDays(arrA.labDays, arrB.lecDays))
+        
     }else if(arrB.labDays){
-        if(conflictingDays(arrA.lecDays, arrB.labDays)){
-            return true
-        }
+        
+            results.push(conflictingDays(arrA.lecDays, arrB.labDays))
+        
     }else if(conflictingDays(arrA.lecDays, arrB.lecDays)){
-        return true
+            results.push(conflictingDays(arrA.lecDays, arrB.lecDays))
     }
+
+
     
-    return false
+    return results.length > 0
+}
+
+const toNum = (val: string) => Number(val.replace(/\D/, ''))
+
+const noConflict = ( a: SubjectRow, arrB: SubjectRow[]) => {
+    const conflicts: boolean[] = []
+    for(let i = 0; i < arrB.length; i++){
+        if(checkConflicts(a, arrB[i])){
+            
+            if(toNum(a.lecStart) < toNum(arrB[i].lecStart) && toNum(a.lecStart) >=  toNum(arrB[i].lecEnd)){
+                conflicts.push(true)
+            }else if(toNum(a.lecStart) !== toNum(arrB[i].lecStart)){
+                conflicts.push(true)
+            }else {
+                conflicts.push(false)
+            }
+           
+           
+            if(a.labStart){
+                if(toNum(a.labStart) < toNum(arrB[i].lecStart) && toNum(a.labStart) >= toNum(arrB[i].lecEnd)){
+                    conflicts.push(true)
+    
+                }else if(toNum(a.labStart) !== toNum(arrB[i].lecStart)){
+                    conflicts.push(true)
+                }else{
+                    conflicts.push(false)
+                }
+            }
+            
+
+            
+            if(arrB[i].labStart && arrB[i].labEnd){
+                if(toNum(a.lecStart) < toNum(arrB[i].labStart!) && toNum(a.lecStart) >= toNum(arrB[i].labEnd!)){
+                    conflicts.push(true)
+    
+                }else if(toNum(a.lecStart) != toNum(arrB[i].labStart!)  ){
+                    conflicts.push(true)
+                }else{
+                    conflicts.push(false)
+                }
+            }
+
+            if(a.labStart  && arrB[i].labStart && arrB[i].labEnd ){
+                if(toNum(a.labStart) < toNum(arrB[i].labStart!)  && toNum(a.labStart) >= toNum(arrB[i].labEnd!)){
+                    conflicts.push(true)
+    
+                }else if(toNum(a.labStart) != toNum(arrB[i].labStart!) ){
+                    conflicts.push(true)
+
+                }else{
+                    conflicts.push(false)
+                }
+            }
+
+            
+        }
+        // console.log(a)
+        // console.log(arrB[i])
+        // console.log(conflicts)
+    }
+
+    
+    
+     if(conflicts.includes(false)){
+         return false
+     }
+     return true
+    
 }
 
 const removeConflicts = (arrA: SubjectRow[], arrB: SubjectRow[] ) => {
-    const result: SubjectRow[] = []
-
-    for(let i = 0; i < arrA.length; i++){
-        for(let j = 0; j < arrB.length; j++){
-            if(checkConflicts(arrA[i], arrB[j])){
-                if(arrA[i].labStart  && arrB[j].labStart && arrB[j].labEnd ){
-                    if(arrA[i].labStart! < arrB[j].labStart! && arrA[i].labStart! >= arrB[j].labEnd!){
-                        result.push(arrA[i])
-
-                    }else if(arrA[i].labStart! != arrB[j].labStart!){
-                        result.push(arrA[i])
-                    }
-                }
-                if(arrA[i].labStart){
-                    if(arrA[i].labStart! < arrB[j].lecStart! && arrA[i].labStart! >= arrB[j].lecEnd!){
-                        result.push(arrA[i])
-
-                    }else if(arrA[i].labStart != arrB[j].lecStart ){
-                        result.push(arrA[i])
-                    }
-                }
-                if(arrB[j].labStart){
-                    if(arrA[i].lecStart < arrB[j].labStart! && arrA[i].lecStart >= arrB[j].labEnd!){
-                        result.push(arrA[i])
-
-                    }else if(arrA[i].lecStart != arrB[j].labStart ){
-                        result.push(arrA[i])
-                    }
-                }
-                if(arrA[i].lecStart < arrB[j].lecStart! && arrA[i].lecStart >= arrB[j].lecEnd!){
-                    result.push(arrA[i])
-
-                }else if(arrA[i].lecStart != arrB[j].lecStart ){
-                    result.push(arrA[i])
-                }
-            }else{
-                result.push(arrA[i])
-            }
-        }
-    }
-    return Array.from(new Set(result))
+    return arrA.filter(a => noConflict(a, arrB))
 }
 
 export { mapSubjectRow, mapSubjects, mapToCards, removeConflicts}

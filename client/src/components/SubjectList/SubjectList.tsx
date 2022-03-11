@@ -92,7 +92,7 @@ export default function SubjecList(props: {student?: number,  disabled?: boolean
     const [tableSelection, select] = useState<GridSelectionModel>([]);
     const [availableSubjects, setAvailable] = useState<SubjectRow[]>([]);
     const [enrolledSubjects, setEnrolled] = useState<SubjectRow[]>([]);
-    const [ rows, setRows] = useState<SubjectRow[]>([]);
+    const [ rows, setRows] = useState<any>([]);
 
     //Modal Window 
     const [open, setOpen] = useState(false);
