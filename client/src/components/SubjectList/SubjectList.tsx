@@ -11,8 +11,8 @@ import {
 import { DataGrid, GridColDef, GridSelectionModel } from '@mui/x-data-grid';
 import axios from 'axios';
 import { Subject,  SubjectRow } from '../../objects/objects';
-import { mapSubjectRow, mapSubjects, conflictingDays } from "../../helper/helpers"
-import { isLabeledStatement } from 'typescript';
+import { mapSubjectRow,  removeConflicts } from "../../helper/helpers"
+
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -85,38 +85,6 @@ const columns: GridColDef[] = [
   
   //Rows
 
-//   const removeConflicts = (arrA: SubjectRow[], arrB: SubjectRow[]) => {
-//      let result: SubjectRow[] = arrA;
-//         arrB.forEach( b => {
-//            if(b.labDays && b.labStart && b.labEnd){
-//                result = result.filter(a => {
-//                    if(a.labDays && a.labStart){
-//                      return a.labStart < b.labStart! &&  b.labEnd! >= a.labStart
-//                    }
-//                 })
-//                 .filter(a => {
-//                     if(a.labStart){
-//                     return a.labStart != b.labStart!
-//                   }
-//                 })
-//             }
-
-//             result = result.filter(a => {
-//                 if(a.labDays && a.labStart){
-//                   return a.labStart! < b.lecStart &&  b.lecEnd >= a.labStart!
-//                 }
-//              })
-//              .filter(a => {
-//                  if(a.labStart){
-//                  return a.labStart != b.lecStart
-//                }
-//              })
-//              .filter(a => a.lecStart != b.lecStart)
-//              .filter(a => a.lecStart! < b.lecStart &&  b.lecEnd >= a.lecStart)
-//         })
-
-//     return result;
-//   }
   
 
 export default function SubjecList(props: {student?: number,  disabled?: boolean}) {
@@ -171,7 +139,7 @@ export default function SubjecList(props: {student?: number,  disabled?: boolean
         switch (newValue) {
             case "available" :
                 setTable("available")
-                setRows([...availableSubjects])
+                setRows(removeConflicts([...availableSubjects], [...enrolledSubjects]))
                 break;
             case "enrolled" :
                 setTable("enrolled")
@@ -179,8 +147,6 @@ export default function SubjecList(props: {student?: number,  disabled?: boolean
                 break;
 
         }
-
-        console.log(rows)
     }
 
     const handleSubmit = (e: FormEvent) => {

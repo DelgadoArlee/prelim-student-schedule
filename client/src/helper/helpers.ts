@@ -73,22 +73,6 @@ const convertDay = ( value: number ) => {
 
 const mapDays = (arr: number[]) => arr.map(convertDay)
 
-
-const conflictingDays = (arrA?: string[], arrB?: string[]) => {
-    if(arrA && arrB){
-        const conflicts = arrA.map( a => {
-            if(arrB.includes(a)){
-                return a
-            }
-        })
-    
-        return conflicts.length > 0;
-    }
-    
-    return false
-}
-
-
 const subjectRow = (subject: any) => {
 
     console.log(subject)
@@ -143,6 +127,83 @@ const mapToCards = ( subjects: Subject[], color?: string, borderColor?: string )
 
     
 }
-    
 
-export { mapSubjectRow, mapSubjects, mapToCards, conflictingDays }
+const conflictingDays = (arrA?: string[], arrB?: string[]) => {
+    if(arrA && arrB){
+        const conflicts = arrA.map( a => {
+            if(arrB.includes(a)){
+                return a
+            }
+        })
+    
+        return conflicts.length > 0;
+    }
+    
+    return false
+}
+
+const checkConflicts = (arrA: SubjectRow, arrB: SubjectRow) => {
+    if(arrA.labDays && arrB.labDays){
+        if(conflictingDays(arrA.labDays, arrB.labDays)){
+            return true;
+        }
+    }else if(arrA.labDays){
+        if(conflictingDays(arrA.labDays, arrB.lecDays)){
+            return true
+        }
+    }else if(arrB.labDays){
+        if(conflictingDays(arrA.lecDays, arrB.labDays)){
+            return true
+        }
+    }else if(conflictingDays(arrA.lecDays, arrB.lecDays)){
+        return true
+    }
+    
+    return false
+}
+
+const removeConflicts = (arrA: SubjectRow[], arrB: SubjectRow[] ) => {
+    const result: SubjectRow[] = []
+
+    for(let i = 0; i < arrA.length; i++){
+        for(let j = 0; j < arrB.length; j++){
+            if(checkConflicts(arrA[i], arrB[j])){
+                if(arrA[i].labStart  && arrB[j].labStart && arrB[j].labEnd ){
+                    if(arrA[i].labStart! < arrB[j].labStart! && arrA[i].labStart! >= arrB[j].labEnd!){
+                        result.push(arrA[i])
+
+                    }else if(arrA[i].labStart! != arrB[j].labStart!){
+                        result.push(arrA[i])
+                    }
+                }
+                if(arrA[i].labStart){
+                    if(arrA[i].labStart! < arrB[j].lecStart! && arrA[i].labStart! >= arrB[j].lecEnd!){
+                        result.push(arrA[i])
+
+                    }else if(arrA[i].labStart != arrB[j].lecStart ){
+                        result.push(arrA[i])
+                    }
+                }
+                if(arrB[j].labStart){
+                    if(arrA[i].lecStart < arrB[j].labStart! && arrA[i].lecStart >= arrB[j].labEnd!){
+                        result.push(arrA[i])
+
+                    }else if(arrA[i].lecStart != arrB[j].labStart ){
+                        result.push(arrA[i])
+                    }
+                }
+                if(arrA[i].lecStart < arrB[j].lecStart! && arrA[i].lecStart >= arrB[j].lecEnd!){
+                    result.push(arrA[i])
+
+                }else if(arrA[i].lecStart != arrB[j].lecStart ){
+                    result.push(arrA[i])
+                }
+            }else{
+                result.push(arrA[i])
+            }
+        }
+    }
+    return Array.from(new Set(result))
+}
+
+export { mapSubjectRow, mapSubjects, mapToCards, removeConflicts}
