@@ -19,8 +19,8 @@ export default function Compare(props: {students: Student[], setSchedule: Dispat
             <MenuItem value={student.id}>{name}</MenuItem>
         )
     })
-    const [studentA, setStudentA] = useState<number>();
-    const [studentB, setStudentB] = useState<number>();
+    const [studentA, setStudentA] = useState<number>(0);
+    const [studentB, setStudentB] = useState<number>(0);
     const [subjectsA, setSubjectsA] = useState<Subject[]>([]);
     const [subjectsB, setSubjectsB] = useState<Subject[]>([]);
     const [studentOptionsA, setOptionsA ] = useState(studentOptions);
