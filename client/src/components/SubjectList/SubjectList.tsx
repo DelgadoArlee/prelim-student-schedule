@@ -88,7 +88,7 @@ const columns: GridColDef[] = [
   
 
 export default function SubjecList(props: {student?: number,  disabled?: boolean}) {
-    const [table, setTable] = useState("available");
+    const [table, setTable] = useState(" ");
     const [tableSelection, select] = useState<GridSelectionModel>([]);
     const [availableSubjects, setAvailable] = useState<SubjectRow[]>([]);
     const [enrolledSubjects, setEnrolled] = useState<SubjectRow[]>([]);
@@ -103,9 +103,10 @@ export default function SubjecList(props: {student?: number,  disabled?: boolean
 
     useEffect(() => {
 
-         axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: props.student}})
-        .then(res => setEnrolled(mapSubjectRow(res.data[0].Subject)))
-        .catch( err => {
+        if(props.student && props.student > 0){
+            axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: props.student}})
+            .then(res => setEnrolled(mapSubjectRow(res.data[0].Subject)))
+            .catch( err => {
             if (err.response){
                 console.log(err.response);
             } else if (err.request){
@@ -129,6 +130,8 @@ export default function SubjecList(props: {student?: number,  disabled?: boolean
             console.log(err.config);
         });
 
+        }
+         
        
     }, [open])
 
@@ -136,6 +139,7 @@ export default function SubjecList(props: {student?: number,  disabled?: boolean
     
 
     const handleTabs = (e: SyntheticEvent, newValue: string) => {
+        const x = [[...availableSubjects],[...enrolledSubjects]]
         switch (newValue) {
             case "available" :
                 setTable("available")
@@ -206,6 +210,7 @@ export default function SubjecList(props: {student?: number,  disabled?: boolean
         }
 
         select([])
+        handleClose()
 
       
     }
