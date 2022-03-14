@@ -35,18 +35,22 @@ export default function View(props: {students: Student[], setSchedule: Dispatch<
 
     // fetches the subject of the selected student // 
     useEffect(() => {
-        axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentId}})
-        .then(res => setSubjects(mapSubjects(res.data[0].Subject)))
-        .catch( err => {
-            if (err.response){
-                console.log(err.response);
-            } else if (err.request){
-                console.log(err.request);
-            } else{
-                console.log(err.message);
-            }
-            console.log(err.config);
-        });
+        if (studentId > 0){
+            axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentId}})
+                .then(res => setSubjects(mapSubjects(res.data[0].Subject)))
+                .catch( err => {
+                    if (err.response){
+                        console.log(err.response);
+                    } else if (err.request){
+                        console.log(err.request);
+                    } else{
+                        console.log(err.message);
+                    }
+                    console.log(err.config);
+            });
+            
+        }
+        
     }, [studentId])
 
    const handleOnClick = () => {

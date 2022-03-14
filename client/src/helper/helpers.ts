@@ -1,3 +1,4 @@
+import { copyFileSync } from "fs";
 import { Subject, SubjectCard, SubjectRow} from "../objects/objects";
 import  subjectColors  from "../styles/subjectColors";
 
@@ -75,7 +76,6 @@ const mapDays = (arr: number[]) => arr.map(convertDay)
 
 const subjectRow = (subject: any) => {
 
-    console.log(subject)
   let result: SubjectRow =  { 
     id: subject.id,
     title: subject.title,
@@ -159,7 +159,7 @@ const checkConflicts = (arrA: SubjectRow, arrB: SubjectRow) => {
     }
 
 
-    
+    console.log(results)
     return results.length > 0
 }
 
@@ -168,55 +168,112 @@ const toNum = (val: string) => Number(val.replace(/\D/, ''))
 const noConflict = ( a: SubjectRow, arrB: SubjectRow[]) => {
     const conflicts: boolean[] = []
     for(let i = 0; i < arrB.length; i++){
-        if(checkConflicts(a, arrB[i])){
-            
-            if(toNum(a.lecStart) < toNum(arrB[i].lecStart) && toNum(a.lecStart) >=  toNum(arrB[i].lecEnd)){
-                conflicts.push(true)
-            }else if(toNum(a.lecStart) !== toNum(arrB[i].lecStart)){
-                conflicts.push(true)
-            }else {
+        console.log(a)
+        console.log(arrB[i])
+        
+        if(conflictingDays(a.lecDays, arrB[i].lecDays)){
+            // if(toNum(a.lecStart) < toNum(arrB[i].lecStart) && toNum(a.lecStart) >=  toNum(arrB[i].lecEnd)){
+            //     conflicts.push(true)
+            // }else if(toNum(a.lecStart) !== toNum(arrB[i].lecStart)){
+            //     conflicts.push(true)
+            // }else {
+            //     conflicts.push(false)
+            // }
+
+            if(toNum(a.lecStart) >= toNum(arrB[i].lecStart) && toNum(a.lecStart) <  toNum(arrB[i].lecEnd)){
                 conflicts.push(false)
-            }
-           
-           
-            if(a.labStart){
-                if(toNum(a.labStart) < toNum(arrB[i].lecStart) && toNum(a.labStart) >= toNum(arrB[i].lecEnd)){
-                    conflicts.push(true)
-    
-                }else if(toNum(a.labStart) !== toNum(arrB[i].lecStart)){
-                    conflicts.push(true)
-                }else{
-                    conflicts.push(false)
-                }
-            }
-            
 
-            
-            if(arrB[i].labStart && arrB[i].labEnd){
-                if(toNum(a.lecStart) < toNum(arrB[i].labStart!) && toNum(a.lecStart) >= toNum(arrB[i].labEnd!)){
-                    conflicts.push(true)
-    
-                }else if(toNum(a.lecStart) != toNum(arrB[i].labStart!)  ){
-                    conflicts.push(true)
-                }else{
-                    conflicts.push(false)
-                }
+            }else if(toNum(a.lecStart) < toNum(arrB[i].lecStart) && toNum(a.lecEnd) ===  toNum(arrB[i].lecEnd)){
+                conflicts.push(false)
+
+            }else if(toNum(a.lecStart) === toNum(arrB[i].lecStart)){
+                conflicts.push(false)
+            }else {
+                conflicts.push(true)
             }
-
-            if(a.labStart  && arrB[i].labStart && arrB[i].labEnd ){
-                if(toNum(a.labStart) < toNum(arrB[i].labStart!)  && toNum(a.labStart) >= toNum(arrB[i].labEnd!)){
-                    conflicts.push(true)
-    
-                }else if(toNum(a.labStart) != toNum(arrB[i].labStart!) ){
-                    conflicts.push(true)
-
-                }else{
-                    conflicts.push(false)
-                }
-            }
-
-            
         }
+        
+        if(conflictingDays(a.lecDays, arrB[i].labDays)){
+
+            if(a.labStart){
+
+                // if(toNum(a.labStart) < toNum(arrB[i].lecStart) && toNum(a.labStart) >= toNum(arrB[i].lecEnd)){
+                     
+                //     conflicts.push(true)
+        
+                // }else if(toNum(a.labStart) !== toNum(arrB[i].lecStart)){
+                //     conflicts.push(true)
+                // }else{
+                //     conflicts.push(false)
+                // }
+
+                if(toNum(a.labStart) >= toNum(arrB[i].lecStart) && toNum(a.labStart) < toNum(arrB[i].lecEnd)){
+                    conflicts.push(false)
+
+                }else if (toNum(a.labStart) < toNum(arrB[i].lecStart) && toNum(a.labEnd!) === toNum(arrB[i].lecEnd)){
+                    conflicts.push(false)
+        
+                }else if(toNum(a.labStart) === toNum(arrB[i].lecStart)){
+                    conflicts.push(false)
+                }else{
+                    conflicts.push(true)
+                }
+            }
+    
+                
+            if(arrB[i].labStart ){
+                // if(toNum(a.lecStart) < toNum(arrB[i].labStart!) && toNum(a.lecStart) >= toNum(arrB[i].labEnd!)){
+                //     conflicts.push(true)
+        
+                // }else if(toNum(a.lecStart) !== toNum(arrB[i].labStart!)  ){
+                //     conflicts.push(true)
+                // }else{
+                //     conflicts.push(false)
+                // }
+                
+                 if(toNum(a.lecStart) >= toNum(arrB[i].labStart!) && toNum(a.lecStart) < toNum(arrB[i].labEnd!)){
+                    conflicts.push(false)
+        
+                }else if(toNum(a.lecStart) < toNum(arrB[i].labStart!) && toNum(a.lecEnd) === toNum(arrB[i].labEnd!)){
+                    conflicts.push(false)
+                }else if(toNum(a.lecStart) === toNum(arrB[i].labStart!)  ){
+                    conflicts.push(false)
+                }else{
+                    conflicts.push(true)
+                }
+            }
+        }
+           
+       
+
+        if(a.labStart  && arrB[i].labStart && conflictingDays(a.labDays, arrB[i].labDays)){
+            // if(toNum(a.labStart) < toNum(arrB[i].labStart!)  && toNum(a.labStart) >= toNum(arrB[i].labEnd!)){
+            //     conflicts.push(true)
+    
+            // }else if(toNum(a.labStart) !== toNum(arrB[i].labStart!) ){
+            //     conflicts.push(true)
+
+            // }else{
+            //     conflicts.push(false)
+            // }
+           
+             if(toNum(a.labStart) >= toNum(arrB[i].labStart!)  && toNum(a.labStart) < toNum(arrB[i].labEnd!)){
+                conflicts.push(false)
+    
+            }else if(toNum(a.labStart) < toNum(arrB[i].labStart!) && toNum(a.labEnd!) === toNum(arrB[i].labEnd!)){
+                conflicts.push(false)
+
+            }else if(toNum(a.labStart) === toNum(arrB[i].labStart!) ){
+                conflicts.push(false)
+
+            }else{
+                conflicts.push(true)
+            }
+        }
+           
+
+            
+        
         // console.log(a)
         // console.log(arrB[i])
         // console.log(conflicts)
@@ -224,10 +281,12 @@ const noConflict = ( a: SubjectRow, arrB: SubjectRow[]) => {
 
     
     
-     if(conflicts.includes(false)){
-         return false
+    if(conflicts.includes(false)){
+        return false
      }
      return true
+    // console.log(conflicts)
+    // return conflicts.includes(false)
     
 }
 
