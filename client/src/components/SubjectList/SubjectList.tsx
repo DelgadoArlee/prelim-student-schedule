@@ -1,4 +1,11 @@
-import React, { useState, useEffect, SyntheticEvent, FormEvent} from 'react';
+import React, { 
+    useState, 
+    useEffect, 
+    SyntheticEvent,
+    FormEvent,
+    Dispatch,
+    SetStateAction
+} from 'react';
 import { 
     Box, 
     Button, 
@@ -10,7 +17,7 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef, GridSelectionModel } from '@mui/x-data-grid';
 import axios from 'axios';
-import { Subject,  SubjectRow } from '../../objects/objects';
+import { SubjectCard,  SubjectRow } from '../../objects/objects';
 import { mapSubjectRow,  removeConflicts } from "../../helper/helpers"
 
 
@@ -87,7 +94,7 @@ const columns: GridColDef[] = [
 
   
 
-export default function SubjecList(props: {student?: number,  disabled?: boolean}) {
+export default function SubjecList(props: {student?: number,  disabled?: boolean, setSchedule: Dispatch<SetStateAction<SubjectCard[]>>}) {
     const [table, setTable] = useState(" ");
     const [tableSelection, select] = useState<GridSelectionModel>([]);
     const [availableSubjects, setAvailable] = useState<SubjectRow[]>([]);
@@ -211,6 +218,7 @@ export default function SubjecList(props: {student?: number,  disabled?: boolean
 
         select([])
         handleClose()
+        props.setSchedule([]);
 
       
     }

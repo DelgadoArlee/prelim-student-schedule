@@ -63,13 +63,13 @@ export default function View(props: {students: Student[], setSchedule: Dispatch<
                 <InputLabel >
                     <em>Student</em>
                 </InputLabel>
-                <Select autoWidth label="Student" onChange={handleStudentChange}>
+                <Select autoWidth label="Student" onChange={handleStudentChange} >
                     <MenuItem></MenuItem>
                     {studentOptions}
                 </Select>
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
-                <SubjectList student={studentId} disabled={disableButton}/>
+                <SubjectList student={studentId} disabled={disableButton} setSchedule={props.setSchedule}/>
             </FormControl>
             <Button  
             variant="contained" 
