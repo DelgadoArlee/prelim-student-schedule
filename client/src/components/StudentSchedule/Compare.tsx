@@ -50,36 +50,41 @@ export default function Compare(props: {students: Student[], setSchedule: Dispat
 
     // gets subjects of Student A //
     useEffect(() => {
-        axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentA}})
-        .then(res => setSubjectsA(mapSubjects(res.data[0].Subject)))
-        .catch( err => {
-            if (err.response){
-                console.log(err.response);
-            } else if (err.request){
-                console.log(err.request);
-            } else{
-                console.log(err.message);
-            }
-            console.log(err.config);
-        })    
-      ;
+        if(studentA > 0){
+            axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentA}})
+            .then(res => setSubjectsA(mapSubjects(res.data[0].Subject)))
+            .catch( err => {
+                if (err.response){
+                    console.log(err.response);
+                } else if (err.request){
+                    console.log(err.request);
+                } else{
+                    console.log(err.message);
+                }
+                console.log(err.config);
+        });
+            
+        }
+        
     }, [studentA])
 
 // gets subjects of Student B // 
     useEffect(() => {
-        axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentB}})
-        .then(res => setSubjectsB(mapSubjects(res.data[0].Subject)))
-        .catch( err => {
-            if (err.response){
-                console.log(err.response);
-            } else if (err.request){
-                console.log(err.request);
-            } else{
-                console.log(err.message);
-            }
-            console.log(err.config);
-        })    
-      ;
+        if(studentB > 0 ){
+            axios.get(`http://localhost:5000/get/studentSubjects`, { params:{ id: studentB}})
+            .then(res => setSubjectsB(mapSubjects(res.data[0].Subject)))
+            .catch( err => {
+                if (err.response){
+                    console.log(err.response);
+                } else if (err.request){
+                    console.log(err.request);
+                } else{
+                    console.log(err.message);
+                }
+                console.log(err.config);
+        });
+        }
+        
     }, [studentB])
 
     // Compare Button handler
