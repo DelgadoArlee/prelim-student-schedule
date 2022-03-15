@@ -147,7 +147,7 @@ const toNum = (val: string) => Number(val.replace(/\D/, ''))
 const noConflict = ( a: SubjectRow, arrB: SubjectRow[]) => {
     const conflicts: boolean[] = []
     for(let i = 0; i < arrB.length; i++){
-        
+
         if(conflictingDays(a.lecDays, arrB[i].lecDays)){
 
             if(toNum(a.lecStart) >= toNum(arrB[i].lecStart) && toNum(a.lecStart) <  toNum(arrB[i].lecEnd)){
@@ -214,7 +214,6 @@ const noConflict = ( a: SubjectRow, arrB: SubjectRow[]) => {
            
 
             
-
     }
 
     
@@ -230,4 +229,4 @@ const removeConflicts = (arrA: SubjectRow[], arrB: SubjectRow[] ) => {
     return arrA.filter(a => noConflict(a, arrB))
 }
 
-export { mapSubjectRow, mapSubjects, mapToCards, removeConflicts}
+export { mapSubjectRow, mapSubjects, mapToCards, removeConflicts, toNum}

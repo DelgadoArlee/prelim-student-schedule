@@ -26,6 +26,7 @@ import {
 } from "@mui/material"
 import axios from 'axios';
 import { Student, Subject, SubjectCard } from '../../objects/objects';
+import { toNum } from '../../helper/helpers';
 
 
 
@@ -145,6 +146,8 @@ export default function AddSubjectForm() {
             
         }
 
+        options.push(<MenuItem value={`24:00`}>24:00</MenuItem>)
+
         return options
     }
 
@@ -159,11 +162,11 @@ export default function AddSubjectForm() {
         switch (key) {
             case "start":
                 dispatch({key:'StartTime', value: value})
-                setEndOptions(timeOptions.filter(option => option.props.value !== value))
+                setEndOptions(timeOptions.filter(option => toNum(option.props.value) > toNum(value)))
                 break;
             case "end":
                 dispatch({key:'EndTime', value: value})
-                setStartOptions(timeOptions.filter(option => option.props.value !== value))
+                setStartOptions(timeOptions.filter(option => toNum(option.props.value) < toNum(value)))
                 break;
             default:
                 break;
